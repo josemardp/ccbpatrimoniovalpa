@@ -1,14 +1,41 @@
 import { AppShell } from "@/components/app-shell";
-import { Sprint1Dashboard } from "@/components/sprint1-dashboard";
+import { RotinasBoard } from "@/components/rotinas-board";
 import { requireGestorAdm } from "@/lib/auth";
-import { getSprint1Data } from "@/app/(app)/dashboard/actions";
+import { prisma } from "@/lib/prisma";
 
-export default async function RotinasPage() {
-  const { profile } = await requireGestorAdm();
+function parseCompetencia(searchParams: { ano?: string; mes?: string }) {
   const now = new Date();
-  const initialYear = now.getFullYear();
-  const initialMonth = now.getMonth() + 1;
-  const initialData = await getSprint1Data(initialYear, initialMonth);
+  const ano = Number(searchParams.ano ?? now.getFullYear());
+  const mes = Number(searchParams.mes ?? now.getMonth() + 1);
+
+  return {
+    ano: Number.isInteger(ano) && ano >= 2020 && ano <= 2100 ? ano : now.getFullYear(),
+    mes: Number.isInteger(mes) && mes >= 1 && mes <= 12 ? mes : now.getMonth() + 1,
+  };
+}
+
+export default async function RotinasPage({ searchParams }: { searchParams: { ano?: string; mes?: string } }) {
+  const { profile } = await requireGestorAdm();
+  const competencia = parseCompetencia(searchParams);
+  const [casas, form148Statuses, controlesMensais] = await Promise.all([
+    prisma.casaOracao.findMany({
+      where: { administracaoId: profile.administracaoId, ativa: true },
+      orderBy: { codigoSiga: "asc" },
+      select: { id: true, codigoSiga: true, nome: true, cidade: true },
+    }),
+    prisma.form148Status.findMany({
+      where: {
+        administracaoId: profile.administracaoId,
+        competenciaAno: competencia.ano,
+        competenciaMes: { lte: competencia.mes },
+      },
+      select: { casaOracaoId: true, competenciaMes: true, etapa: true, status: true },
+    }),
+    prisma.controleMensal.findMany({
+      where: { administracaoId: profile.administracaoId, competenciaAno: competencia.ano },
+      select: { tarefaId: true, competenciaMes: true, status: true },
+    }),
+  ]);
 
   return (
     <AppShell
@@ -17,7 +44,13 @@ export default async function RotinasPage() {
       userEmail={profile.email}
       userName={profile.nome}
     >
-      <Sprint1Dashboard initialData={initialData} initialMonth={initialMonth} initialYear={initialYear} />
+      <RotinasBoard
+        ano={competencia.ano}
+        casas={casas}
+        controlesMensais={controlesMensais}
+        form148Statuses={form148Statuses}
+        mes={competencia.mes}
+      />
     </AppShell>
   );
 }
