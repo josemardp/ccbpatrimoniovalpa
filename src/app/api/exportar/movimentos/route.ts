@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getIpFromHeaders } from "@/lib/rate-limit";
 
 const XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
@@ -45,6 +46,11 @@ export async function GET(request: NextRequest) {
 
   if (!currentUser || currentUser.profile.papel !== "gestor_adm") {
     return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+  }
+
+  const ip = getIpFromHeaders(request.headers);
+  if (!checkRateLimit(`export:movimentos:${currentUser.profile.id}:${ip}`, 30, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: "Muitas exportações. Tente novamente mais tarde." }, { status: 429 });
   }
 
   const competencia = parseCompetencia(request.nextUrl.searchParams);

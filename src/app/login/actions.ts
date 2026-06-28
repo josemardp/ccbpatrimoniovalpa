@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function getClientIp() {
@@ -21,9 +22,14 @@ function getClientIp() {
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
+  const clientIp = getClientIp() ?? "unknown";
 
   if (!email || !password) {
     redirect("/login?error=missing");
+  }
+
+  if (!checkRateLimit(`login:${clientIp}`, 5, 15 * 60 * 1000)) {
+    redirect("/login?error=rate_limit");
   }
 
   const supabase = createSupabaseServerClient();
@@ -58,7 +64,7 @@ export async function signIn(formData: FormData) {
       action: "auth.sign_in",
       entity: "Usuario",
       entityId: usuario.id,
-      ip: getClientIp(),
+      ip: clientIp,
       metadata: {},
     },
   });

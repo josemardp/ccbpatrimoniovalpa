@@ -8,6 +8,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   invalid: "E-mail ou senha inválidos.",
   missing: "Informe e-mail e senha.",
   unauthorized: "Este usuário não está habilitado como gestor_adm.",
+  rate_limit: "Muitas tentativas de login. Aguarde alguns minutos e tente novamente.",
 };
 
 const STATUS_MESSAGES: Record<string, string> = {

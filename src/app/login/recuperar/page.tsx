@@ -6,11 +6,12 @@ const STATUS_MESSAGES: Record<string, string> = {
   sent: "Se o e-mail estiver cadastrado, enviaremos um link de recuperação.",
   missing: "Informe o e-mail cadastrado.",
   error: "Não foi possível enviar o e-mail de recuperação.",
+  rate_limit: "Muitas solicitações para este e-mail. Aguarde antes de tentar novamente.",
 };
 
 export default function RecuperarSenhaPage({ searchParams }: { searchParams: { status?: string } }) {
   const message = searchParams.status ? STATUS_MESSAGES[searchParams.status] : null;
-  const isError = searchParams.status === "missing" || searchParams.status === "error";
+  const isError = searchParams.status === "missing" || searchParams.status === "error" || searchParams.status === "rate_limit";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4">

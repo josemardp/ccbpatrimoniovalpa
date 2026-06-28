@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exportarInventarioCasa, exportarInventarioCompleto } from "@/actions/exportacao";
 import { getCurrentUser } from "@/lib/auth";
+import { checkRateLimit, getIpFromHeaders } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,11 @@ export async function GET(request: NextRequest) {
 
   if (!currentUser || currentUser.profile.papel !== "gestor_adm") {
     return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+  }
+
+  const ip = getIpFromHeaders(request.headers);
+  if (!checkRateLimit(`export:inventario:${currentUser.profile.id}:${ip}`, 30, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: "Muitas exportações. Tente novamente mais tarde." }, { status: 429 });
   }
 
   const params = request.nextUrl.searchParams;
