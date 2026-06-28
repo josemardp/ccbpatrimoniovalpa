@@ -145,7 +145,16 @@ export default async function MovimentosPage({
               </button>
             </form>
 
-            <MovimentoDialog casas={casas} hoje={hoje} />
+            <div className="flex flex-wrap gap-2">
+              <a
+                className="flex h-10 items-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                download
+                href={`/api/exportar/movimentos?ano=${filters.ano}&mes=${filters.mes}`}
+              >
+                Exportar
+              </a>
+              <MovimentoDialog casas={casas} hoje={hoje} />
+            </div>
           </div>
         </section>
 

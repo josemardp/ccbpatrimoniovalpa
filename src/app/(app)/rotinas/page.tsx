@@ -44,6 +44,15 @@ export default async function RotinasPage({ searchParams }: { searchParams: { an
       userEmail={profile.email}
       userName={profile.nome}
     >
+      <div className="mb-4 flex justify-end">
+        <a
+          className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+          download
+          href={`/api/exportar/controle?ano=${competencia.ano}&mes=${competencia.mes}`}
+        >
+          Exportar competência
+        </a>
+      </div>
       <RotinasBoard
         ano={competencia.ano}
         casas={casas}

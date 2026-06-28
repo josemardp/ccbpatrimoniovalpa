@@ -121,7 +121,16 @@ async function Form148Tab({ ano, mes }: { ano: number; mes: number }) {
               Competência {String(mes).padStart(2, "0")}/{ano}
             </p>
           </div>
-          <PrintButton />
+          <div className="flex flex-wrap gap-2" data-print-hide>
+            <a
+              className="rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              download
+              href={`/api/exportar/controle?ano=${ano}&mes=${mes}`}
+            >
+              Exportar competência (.xlsx)
+            </a>
+            <PrintButton />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[920px] text-left text-sm">
@@ -209,7 +218,14 @@ async function InventarioTab({ casaId, categoria }: { casaId?: string; categoria
           <button className="h-10 rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 md:self-end">
             Filtrar
           </button>
-          <div className="flex gap-2 md:self-end">
+          <div className="flex flex-wrap gap-2 md:self-end">
+            <a
+              className="rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              download
+              href="/api/exportar/inventario?completo=true&formato=xlsx"
+            >
+              Exportar inventário completo (.xlsx)
+            </a>
             <ExportInventarioCsvButton />
             <PrintButton />
           </div>
@@ -274,7 +290,14 @@ async function MovimentosTab({ ano, mes }: { ano: number; mes: number }) {
       <PrintHeader title={`Relatório de Movimentos — ${String(mes).padStart(2, "0")}/${ano}`} />
 
       <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="mb-4 flex justify-end">
+        <div className="mb-4 flex flex-wrap justify-end gap-2" data-print-hide>
+          <a
+            className="rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            download
+            href={`/api/exportar/movimentos?ano=${ano}&mes=${mes}`}
+          >
+            Exportar movimentos (.xlsx)
+          </a>
           <PrintButton />
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

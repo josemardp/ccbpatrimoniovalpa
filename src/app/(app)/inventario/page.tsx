@@ -174,6 +174,42 @@ export default async function InventarioPage({
             </form>
 
             <div className="flex flex-wrap gap-2">
+              <details className="relative">
+                <summary className="flex h-10 cursor-pointer list-none items-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                  Exportar
+                </summary>
+                <div className="absolute right-0 z-20 mt-2 w-64 rounded-lg border border-slate-200 bg-white p-2 text-sm shadow-lg">
+                  {filters.casaId ? (
+                    <>
+                      <a
+                        className="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50"
+                        download
+                        href={`/api/exportar/inventario?casaId=${filters.casaId}&formato=xlsx`}
+                      >
+                        Exportar esta Casa (.xlsx)
+                      </a>
+                      <a
+                        className="block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50"
+                        download
+                        href={`/api/exportar/inventario?casaId=${filters.casaId}&formato=csv`}
+                      >
+                        Exportar esta Casa (.csv)
+                      </a>
+                    </>
+                  ) : (
+                    <div className="rounded-md bg-amber-50 px-3 py-2 text-amber-700">
+                      Selecione uma Casa de Oração no filtro para exportar por casa.
+                    </div>
+                  )}
+                  <a
+                    className="mt-1 block rounded-md px-3 py-2 text-slate-700 hover:bg-slate-50"
+                    download
+                    href="/api/exportar/inventario?completo=true&formato=xlsx"
+                  >
+                    Exportar todas as Casas (.xlsx)
+                  </a>
+                </div>
+              </details>
               <ImportacaoSigaDialog casas={casas} />
               <NovoBemDialog casas={casas} />
             </div>

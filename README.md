@@ -96,6 +96,17 @@ npx prisma db seed
 
 Execute `supabase/rls.sql` no SQL Editor do Supabase após cada deploy inicial. O script habilita Row Level Security nas tabelas do MVP, limita leitura/escrita a usuários autenticados `gestor_adm` da mesma Administração e não libera DELETE via API.
 
+## Exportação
+
+O sistema gera arquivos para conferência externa e importação manual no app oficial CCB:
+
+- Inventário por Casa de Oração em `.xlsx` ou `.csv`, disponível em `/inventario` após selecionar uma Casa no filtro.
+- Inventário completo em `.xlsx`, com uma aba por Casa de Oração e uma aba `Resumo`.
+- Controle mensal em `.xlsx`, com abas `Form. 14.8` e `Controle Geral`, disponível em `/rotinas` e na aba Form 14.8 de `/relatorios`.
+- Movimentos em `.xlsx`, filtrados por competência em `/movimentos` e na aba Movimentos de `/relatorios`.
+
+Para importar no app oficial CCB, use o arquivo `.xlsx` gerado por Casa de Oração. O layout segue o padrão de colunas do SIGA: Código, Descrição, Grupo/Categoria, Marca, Modelo, Nº Série, Data Aquisição, Valor, Estado de Conservação e Observações.
+
 ## Rotas
 
 - `/login`
