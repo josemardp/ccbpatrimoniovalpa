@@ -10,10 +10,14 @@ const ERROR_MESSAGES: Record<string, string> = {
   unauthorized: "Este usuário não está habilitado como gestor_adm.",
 };
 
+const STATUS_MESSAGES: Record<string, string> = {
+  "password-updated": "Senha atualizada. Entre novamente com a nova senha.",
+};
+
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { error?: string; status?: string };
 }) {
   const currentUser = await getCurrentUser();
 
@@ -22,6 +26,7 @@ export default async function LoginPage({
   }
 
   const error = searchParams.error ? ERROR_MESSAGES[searchParams.error] : null;
+  const status = searchParams.status ? STATUS_MESSAGES[searchParams.status] : null;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
@@ -39,6 +44,11 @@ export default async function LoginPage({
         {error ? (
           <div className="mb-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
+          </div>
+        ) : null}
+        {status ? (
+          <div className="mb-5 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            {status}
           </div>
         ) : null}
 
@@ -76,6 +86,10 @@ export default async function LoginPage({
             Entrar
           </button>
         </form>
+
+        <Link className="mt-4 inline-block text-xs font-medium text-blue-700 hover:underline" href="/login/recuperar">
+          Esqueci minha senha
+        </Link>
 
         <p className="mt-6 text-xs leading-5 text-slate-500">
           Acesso restrito aos gestores cadastrados com papel <code>gestor_adm</code>. Crie o usuário no

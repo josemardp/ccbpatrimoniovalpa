@@ -87,6 +87,10 @@ npx prisma migrate deploy
 npx prisma db seed
 ```
 
+## Supabase RLS
+
+Execute `supabase/rls.sql` no SQL Editor do Supabase após cada deploy inicial. O script habilita Row Level Security nas tabelas do MVP, limita leitura/escrita a usuários autenticados `gestor_adm` da mesma Administração e não libera DELETE via API.
+
 ## Rotas
 
 - `/login`
@@ -116,5 +120,6 @@ npm run build
 1. Crie um projeto no Vercel apontando para este repositório.
 2. Configure as mesmas variáveis de ambiente.
 3. Rode a migration/seed contra o banco Supabase antes do primeiro login.
+4. Se o projeto Vercel estiver conectado ao repositório errado: no painel Vercel, acesse `Settings → Git → Disconnect → Connect Git Repository`, selecione `melindagpaula/ccbpatrimoniovalpa` e mantenha a branch `main`.
 
 O deploy público não foi executado na Sprint 0 local porque exige credenciais da conta Vercel/Supabase.

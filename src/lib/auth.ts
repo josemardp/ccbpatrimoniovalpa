@@ -12,6 +12,18 @@ export async function getCurrentUser() {
     return null;
   }
 
+  await prisma.usuario.updateMany({
+    where: {
+      email: user.email,
+      authUserId: null,
+      ativo: true,
+    },
+    data: {
+      authUserId: user.id,
+      lastLoginAt: new Date(),
+    },
+  });
+
   const profile = await prisma.usuario.findFirst({
     where: {
       ativo: true,

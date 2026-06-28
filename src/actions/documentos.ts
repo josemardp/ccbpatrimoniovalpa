@@ -43,10 +43,10 @@ function validateCompetencia(ano: number, mes: number) {
   }
 }
 
-function validatePdf(file: File) {
+async function validatePdf(file: File) {
   const lowerName = file.name.toLowerCase();
 
-  if (!lowerName.endsWith(".pdf") && file.type !== "application/pdf") {
+  if (!lowerName.endsWith(".pdf") || file.type !== "application/pdf") {
     throw new Error("Envie apenas arquivo PDF.");
   }
 
@@ -56,6 +56,12 @@ function validatePdf(file: File) {
 
   if (file.size > MAX_FILE_SIZE) {
     throw new Error("Arquivo maior que 10 MB.");
+  }
+
+  const header = new Uint8Array(await file.slice(0, 5).arrayBuffer());
+  const isPdf = header[0] === 0x25 && header[1] === 0x50 && header[2] === 0x44 && header[3] === 0x46 && header[4] === 0x2d;
+  if (!isPdf) {
+    throw new Error("Arquivo inválido. O conteúdo não parece ser PDF.");
   }
 }
 
@@ -73,7 +79,7 @@ export async function uploadDocumento(formData: FormData) {
     throw new Error("Arquivo PDF obrigatório.");
   }
 
-  validatePdf(arquivo);
+  await validatePdf(arquivo);
 
   const casa = await prisma.casaOracao.findFirst({
     where: { id: casaId, administracaoId: profile.administracaoId, ativa: true },

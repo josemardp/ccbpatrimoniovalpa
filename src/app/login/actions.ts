@@ -33,7 +33,7 @@ export async function signIn(formData: FormData) {
   await prisma.usuario.update({
     where: { id: usuario.id },
     data: {
-      authUserId: data.user.id,
+      authUserId: usuario.authUserId ?? data.user.id,
       lastLoginAt: new Date(),
     },
   });
