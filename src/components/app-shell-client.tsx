@@ -64,6 +64,7 @@ export function AppShellClient({
         className={`fixed inset-y-0 left-0 z-40 hidden border-r border-slate-200 bg-slate-950 text-white transition-all duration-200 lg:flex lg:flex-col ${
           collapsed ? "w-20" : "w-64"
         }`}
+        data-print-hide
       >
         <div className={`border-b border-white/10 py-5 ${collapsed ? "px-3" : "px-5"}`}>
           <div className="flex items-center justify-between gap-2">
@@ -109,7 +110,7 @@ export function AppShellClient({
       </aside>
 
       <div className={`transition-all duration-200 ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}>
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur" data-print-hide>
           <div className="flex min-h-16 items-center justify-between gap-4 px-4 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
               <Menu className="h-5 w-5 flex-shrink-0 text-slate-400 lg:hidden" aria-hidden="true" />
@@ -146,7 +147,7 @@ export function AppShellClient({
           </div>
         </header>
         <main className="px-4 py-6 lg:px-8">{children}</main>
-        <footer className="px-4 pb-6 text-xs text-slate-500 lg:px-8">
+        <footer className="px-4 pb-6 text-xs text-slate-500 lg:px-8" data-print-hide>
           Sessão: {userEmail} · Perfil ativo: gestor_adm
         </footer>
       </div>

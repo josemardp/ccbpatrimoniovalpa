@@ -1,4 +1,5 @@
 import { cache } from "react";
+import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -154,6 +155,18 @@ export default async function DashboardPage() {
             label="Total de bens ativos"
             value={String(dashboard.totalBensAtivos)}
           />
+        </section>
+
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-950">Relatórios e pendências</h2>
+              <p className="mt-1 text-sm text-slate-500">Acompanhe o consolidado do Form. 14.8, inventário, movimentos e pendências.</p>
+            </div>
+            <Link className="text-sm font-semibold text-blue-700 hover:text-blue-800" href="/relatorios">
+              Ver relatório completo →
+            </Link>
+          </div>
         </section>
 
         <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
