@@ -23,6 +23,15 @@ export async function getCurrentUser() {
       lastLoginAt: new Date(),
     },
   });
+  await prisma.usuario.updateMany({
+    where: {
+      authUserId: user.id,
+      ativo: true,
+    },
+    data: {
+      lastLoginAt: new Date(),
+    },
+  });
 
   const profile = await prisma.usuario.findFirst({
     where: {
