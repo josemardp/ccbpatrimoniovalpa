@@ -133,7 +133,7 @@ export default async function DashboardPage() {
           </p>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <KpiCard
             hint="Todas as 5 etapas do Form. 14.8 marcadas como OK"
             icon={FileCheck2}

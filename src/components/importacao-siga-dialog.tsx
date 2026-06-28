@@ -103,11 +103,15 @@ export function ImportacaoSigaDialog({ casas }: { casas: CasaOption[] }) {
         Importar Excel do SIGA
       </button>
 
-      <dialog className="w-full max-w-4xl rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40" ref={dialogRef}>
-        <div className="p-6">
+      <dialog
+        aria-labelledby="importacao-siga-title"
+        className="w-full max-w-4xl rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40"
+        ref={dialogRef}
+      >
+        <div className="max-h-[90vh] overflow-y-auto p-6">
           <div className="border-b border-slate-100 pb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">SIGA</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-950">Importar Excel do SIGA</h2>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950" id="importacao-siga-title">Importar Excel do SIGA</h2>
             <p className="mt-1 text-sm text-slate-500">Valide a planilha antes de gravar os bens patrimoniais.</p>
           </div>
 

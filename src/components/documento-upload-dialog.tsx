@@ -15,8 +15,12 @@ export function DocumentoUploadDialog({ casaId, ano, mes }: { casaId: string; an
       >
         Anexar formulário escaneado
       </button>
-      <dialog className="w-full max-w-lg rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40" ref={dialogRef}>
-        <form action={uploadDocumento} className="p-6">
+      <dialog
+        aria-labelledby="documento-upload-title"
+        className="w-full max-w-lg rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40"
+        ref={dialogRef}
+      >
+        <form action={uploadDocumento} className="max-h-[90vh] overflow-y-auto p-6">
           <input name="casaId" type="hidden" value={casaId} />
           <input name="ano" type="hidden" value={ano} />
           <input name="mes" type="hidden" value={mes} />
@@ -24,7 +28,7 @@ export function DocumentoUploadDialog({ casaId, ano, mes }: { casaId: string; an
 
           <div className="border-b border-slate-100 pb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Form. 14.8</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-950">Anexar formulário escaneado</h2>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950" id="documento-upload-title">Anexar formulário escaneado</h2>
             <p className="mt-1 text-sm text-slate-500">
               Competência {String(mes).padStart(2, "0")}/{ano}. Apenas PDF até 10 MB.
             </p>

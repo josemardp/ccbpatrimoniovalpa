@@ -1,8 +1,10 @@
 import { AppShell } from "@/components/app-shell";
+import { EstadoVazio } from "@/components/estado-vazio";
 import { updateControleMensal, updateForm148Status } from "@/actions/rotinas";
 import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CONTROLE_TAREFAS, FORM_148_ETAPAS, MESES } from "@/lib/sprint1";
+import { CheckCircle2 } from "lucide-react";
 
 function previousCompetencia() {
   const date = new Date();
@@ -115,8 +117,13 @@ export default async function PendenciasPage() {
         ) : null}
 
         {formPendencias.length === 0 && controlePendencias.length === 0 ? (
-          <section className="rounded-lg border border-slate-200 bg-white p-8 text-sm text-slate-500 shadow-sm">
-            Nenhuma pendência aberta encontrada.
+          <section className="rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
+            <EstadoVazio
+              descricao="Não há status pendente nem registros vazios do mês anterior."
+              icon={CheckCircle2}
+              titulo="Tudo em dia! Sem pendências abertas."
+              tone="green"
+            />
           </section>
         ) : null}
       </div>

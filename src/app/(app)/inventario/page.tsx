@@ -2,9 +2,11 @@ import Link from "next/link";
 import { listBens } from "@/actions/inventario";
 import { AppShell } from "@/components/app-shell";
 import { BemAcoes, NovoBemDialog, type BemFormData } from "@/components/bem-dialogs";
+import { EstadoVazio } from "@/components/estado-vazio";
 import { ImportacaoSigaDialog } from "@/components/importacao-siga-dialog";
 import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { PackagePlus } from "lucide-react";
 
 const CATEGORIAS = ["Móveis", "Eletrônicos", "Instrumentos Musicais", "Veículos", "Imóveis", "Outros"] as const;
 
@@ -187,6 +189,7 @@ export default async function InventarioPage({
             <>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[1040px] text-left text-sm">
+                  <caption className="sr-only">Bens patrimoniais ativos cadastrados</caption>
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>
                       <th className="px-5 py-3">Código</th>
@@ -251,7 +254,13 @@ export default async function InventarioPage({
               </div>
             </>
           ) : (
-            <div className="px-5 py-8 text-sm text-slate-500">Nenhum bem ativo encontrado para os filtros atuais.</div>
+            <div className="px-5 py-8">
+              <EstadoVazio
+                descricao="Use o botão Cadastrar bem para iniciar o inventário manual ou importe uma planilha Excel do SIGA."
+                icon={PackagePlus}
+                titulo="Nenhum bem cadastrado. Clique em Cadastrar bem."
+              />
+            </div>
           )}
         </section>
       </div>

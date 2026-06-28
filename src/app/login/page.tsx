@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Church } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
-import { signIn } from "./actions";
+import { LoginForm } from "@/components/login-form";
 
 const ERROR_MESSAGES: Record<string, string> = {
   invalid: "E-mail ou senha inválidos.",
@@ -52,40 +52,7 @@ export default async function LoginPage({
           </div>
         ) : null}
 
-        <form action={signIn} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="email">
-              E-mail
-            </label>
-            <input
-              className="focus-ring w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="password">
-              Senha
-            </label>
-            <input
-              className="focus-ring w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-          </div>
-          <button
-            className="focus-ring w-full rounded-md bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800"
-            type="submit"
-          >
-            Entrar
-          </button>
-        </form>
+        <LoginForm />
 
         <Link className="mt-4 inline-block text-xs font-medium text-blue-700 hover:underline" href="/login/recuperar">
           Esqueci minha senha

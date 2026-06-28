@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { atualizarBem, criarBem, desativarBem } from "@/actions/inventario";
+import { useToast } from "@/components/toast";
 
 export const CATEGORIAS_BEM = ["Móveis", "Eletrônicos", "Instrumentos Musicais", "Veículos", "Imóveis", "Outros"] as const;
 
@@ -172,12 +174,17 @@ function DialogShell({
   kicker: string;
   title: string;
 }) {
+  const titleId = `dialog-title-${title.toLowerCase().replace(/\s+/g, "-")}`;
   return (
-    <dialog className="w-full max-w-3xl rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40" ref={dialogRef}>
-      <div className="p-6">
+    <dialog
+      aria-labelledby={titleId}
+      className="w-full max-w-3xl rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40 sm:max-h-[90vh]"
+      ref={dialogRef}
+    >
+      <div className="max-h-[90vh] overflow-y-auto p-6">
         <div className="border-b border-slate-100 pb-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">{kicker}</p>
-          <h2 className="mt-1 text-lg font-semibold text-slate-950">{title}</h2>
+          <h2 className="mt-1 text-lg font-semibold text-slate-950" id={titleId}>{title}</h2>
         </div>
         {children}
       </div>
@@ -187,6 +194,19 @@ function DialogShell({
 
 export function NovoBemDialog({ casas }: { casas: CasaOption[] }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  async function handleCreate(formData: FormData) {
+    try {
+      await criarBem(formData);
+      showToast("Bem cadastrado com sucesso.");
+      dialogRef.current?.close();
+      router.refresh();
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Falha ao cadastrar bem.", "erro");
+    }
+  }
 
   return (
     <>
@@ -198,7 +218,7 @@ export function NovoBemDialog({ casas }: { casas: CasaOption[] }) {
         Cadastrar bem
       </button>
       <DialogShell dialogRef={dialogRef} kicker="Inventário" title="Cadastrar bem patrimonial">
-        <form action={criarBem} className="mt-5">
+        <form action={handleCreate} className="mt-5">
           <BemFields casas={casas} />
           <div className="mt-6 flex justify-end gap-3">
             <button
@@ -221,6 +241,30 @@ export function NovoBemDialog({ casas }: { casas: CasaOption[] }) {
 export function BemAcoes({ bem, casas }: { bem: BemFormData; casas: CasaOption[] }) {
   const editDialogRef = useRef<HTMLDialogElement>(null);
   const deactivateDialogRef = useRef<HTMLDialogElement>(null);
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  async function handleUpdate(formData: FormData) {
+    try {
+      await atualizarBem(bem.id, formData);
+      showToast("Bem atualizado com sucesso.");
+      editDialogRef.current?.close();
+      router.refresh();
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Falha ao atualizar bem.", "erro");
+    }
+  }
+
+  async function handleDeactivate() {
+    try {
+      await desativarBem(bem.id);
+      showToast("Bem desativado com sucesso.");
+      deactivateDialogRef.current?.close();
+      router.refresh();
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Falha ao desativar bem.", "erro");
+    }
+  }
 
   return (
     <div className="flex justify-end gap-2">
@@ -240,7 +284,7 @@ export function BemAcoes({ bem, casas }: { bem: BemFormData; casas: CasaOption[]
       </button>
 
       <DialogShell dialogRef={editDialogRef} kicker={bem.codigoInterno} title="Editar bem patrimonial">
-        <form action={atualizarBem.bind(null, bem.id)} className="mt-5">
+        <form action={handleUpdate} className="mt-5">
           <BemFields bem={bem} casas={casas} />
           <div className="mt-6 flex justify-end gap-3">
             <button
@@ -257,11 +301,15 @@ export function BemAcoes({ bem, casas }: { bem: BemFormData; casas: CasaOption[]
         </form>
       </DialogShell>
 
-      <dialog className="w-full max-w-md rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40" ref={deactivateDialogRef}>
-        <form action={desativarBem.bind(null, bem.id)} className="p-6">
+      <dialog
+        aria-labelledby={`desativar-${bem.id}`}
+        className="w-full max-w-md rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40"
+        ref={deactivateDialogRef}
+      >
+        <form action={handleDeactivate} className="p-6">
           <div className="border-b border-slate-100 pb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-red-700">{bem.codigoInterno}</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-950">Desativar bem</h2>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950" id={`desativar-${bem.id}`}>Desativar bem</h2>
           </div>
           <p className="mt-5 text-sm text-slate-600">
             Confirma desativar este bem do inventário ativo? O registro será preservado no histórico.

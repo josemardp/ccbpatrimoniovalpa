@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { listMovimentos } from "@/actions/movimentos";
 import { AppShell } from "@/components/app-shell";
+import { EstadoVazio } from "@/components/estado-vazio";
 import { MovimentoDialog } from "@/components/movimento-dialog";
 import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MESES_COMPLETOS } from "@/lib/sprint1";
+import { ArrowLeftRight } from "lucide-react";
 
 const TIPO_LABELS = {
   entrada: "Entrada",
@@ -158,6 +160,7 @@ export default async function MovimentosPage({
             <>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[980px] text-left text-sm">
+                  <caption className="sr-only">Movimentos patrimoniais do período filtrado</caption>
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>
                       <th className="px-5 py-3">Data</th>
@@ -218,7 +221,13 @@ export default async function MovimentosPage({
               </div>
             </>
           ) : (
-            <div className="px-5 py-8 text-sm text-slate-500">Nenhum movimento encontrado para os filtros atuais.</div>
+            <div className="px-5 py-8">
+              <EstadoVazio
+                descricao="Registre entradas, saídas, transferências ou baixas para acompanhar a movimentação patrimonial."
+                icon={ArrowLeftRight}
+                titulo="Nenhum movimento registrado no período."
+              />
+            </div>
           )}
         </section>
       </div>

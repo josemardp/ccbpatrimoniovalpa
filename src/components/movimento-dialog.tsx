@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { criarMovimento } from "@/actions/movimentos";
+import { useToast } from "@/components/toast";
 
 type CasaOption = {
   id: string;
@@ -11,6 +13,19 @@ type CasaOption = {
 
 export function MovimentoDialog({ casas, hoje }: { casas: CasaOption[]; hoje: string }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  async function handleCreate(formData: FormData) {
+    try {
+      await criarMovimento(formData);
+      showToast("Movimento registrado com sucesso.");
+      dialogRef.current?.close();
+      router.refresh();
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Falha ao registrar movimento.", "erro");
+    }
+  }
 
   return (
     <>
@@ -21,11 +36,15 @@ export function MovimentoDialog({ casas, hoje }: { casas: CasaOption[]; hoje: st
       >
         Registrar movimento
       </button>
-      <dialog className="w-full max-w-2xl rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40" ref={dialogRef}>
-        <form action={criarMovimento} className="p-6">
+      <dialog
+        aria-labelledby="movimento-dialog-title"
+        className="w-full max-w-2xl rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40"
+        ref={dialogRef}
+      >
+        <form action={handleCreate} className="max-h-[90vh] overflow-y-auto p-6">
           <div className="border-b border-slate-100 pb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Movimento patrimonial</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-950">Registrar movimento</h2>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950" id="movimento-dialog-title">Registrar movimento</h2>
           </div>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-2">

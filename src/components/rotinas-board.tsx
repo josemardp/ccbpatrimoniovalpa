@@ -4,6 +4,7 @@ import { useEffect, useOptimistic, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, CalendarDays } from "lucide-react";
 import { updateControleMensal, updateForm148Status } from "@/actions/rotinas";
+import { useToast } from "@/components/toast";
 import {
   CONTROLE_TAREFAS,
   FORM_148_ETAPAS,
@@ -83,6 +84,7 @@ function StatusSelectForm({
   optimisticKey: string;
   addOptimistic: (update: { key: string; status: StatusRotinaKey }) => void;
 }) {
+  const { showToast } = useToast();
   return (
     <form action={action}>
       <select
@@ -92,6 +94,7 @@ function StatusSelectForm({
         onChange={(event) => {
           addOptimistic({ key: optimisticKey, status: event.currentTarget.value as StatusRotinaKey });
           event.currentTarget.form?.requestSubmit();
+          showToast("Status atualizado.", "sucesso");
         }}
         value={value}
       >
@@ -225,6 +228,7 @@ export function RotinasBoard({
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[840px] text-left text-sm">
+            <caption className="sr-only">Status do Formulário 14.8 por Casa de Oração</caption>
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-5 py-3">Casa de Oração</th>
@@ -271,6 +275,7 @@ export function RotinasBoard({
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1120px] text-left text-sm">
+            <caption className="sr-only">Controle Geral mensal com sete tarefas fixas</caption>
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="sticky left-0 z-10 min-w-64 bg-slate-50 px-5 py-3">Tarefa</th>
@@ -342,4 +347,3 @@ export function RotinasBoard({
     </div>
   );
 }
-

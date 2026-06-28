@@ -2,21 +2,18 @@
 
 import { useState, useTransition } from "react";
 import { alterarSenha, atualizarPerfil, encerrarSessao, encerrarTodasSessoes } from "@/actions/perfil";
-
-type ActionState = {
-  ok: boolean;
-  message: string;
-} | null;
+import { useToast } from "@/components/toast";
 
 export function PerfilNomeForm({ nome }: { nome: string }) {
   const [name, setName] = useState(nome);
-  const [state, setState] = useState<ActionState>(null);
   const [pending, startTransition] = useTransition();
+  const { showToast } = useToast();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     startTransition(async () => {
-      setState(await atualizarPerfil(name));
+      const result = await atualizarPerfil(name);
+      showToast(result.message, result.ok ? "sucesso" : "erro");
     });
   }
 
@@ -32,15 +29,6 @@ export function PerfilNomeForm({ nome }: { nome: string }) {
           value={name}
         />
       </label>
-      {state ? (
-        <div
-          className={`rounded-md border px-4 py-3 text-sm ${
-            state.ok ? "border-green-200 bg-green-50 text-green-700" : "border-red-200 bg-red-50 text-red-700"
-          }`}
-        >
-          {state.message}
-        </div>
-      ) : null}
       <button
         className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={pending}
@@ -55,25 +43,25 @@ export function AlterarSenhaForm() {
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
-  const [state, setState] = useState<ActionState>(null);
   const [pending, startTransition] = useTransition();
+  const { showToast } = useToast();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (novaSenha === senhaAtual) {
-      setState({ ok: false, message: "A nova senha deve ser diferente da senha atual." });
+      showToast("A nova senha deve ser diferente da senha atual.", "erro");
       return;
     }
 
     if (novaSenha !== confirmacao) {
-      setState({ ok: false, message: "A confirmação não confere com a nova senha." });
+      showToast("A confirmação não confere com a nova senha.", "erro");
       return;
     }
 
     startTransition(async () => {
       const result = await alterarSenha(novaSenha);
-      setState(result);
+      showToast(result.message, result.ok ? "sucesso" : "erro");
 
       if (result.ok) {
         setSenhaAtual("");
@@ -120,15 +108,6 @@ export function AlterarSenhaForm() {
           value={confirmacao}
         />
       </label>
-      {state ? (
-        <div
-          className={`rounded-md border px-4 py-3 text-sm ${
-            state.ok ? "border-green-200 bg-green-50 text-green-700" : "border-red-200 bg-red-50 text-red-700"
-          }`}
-        >
-          {state.message}
-        </div>
-      ) : null}
       <button
         className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={pending}

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
+import { EstadoVazio } from "@/components/estado-vazio";
 import { AlterarSenhaForm, PerfilNomeForm, SessaoActions } from "@/components/perfil-forms";
 import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { ClipboardList } from "lucide-react";
 
 function formatDate(date: Date | null) {
   if (!date) {
@@ -118,6 +120,7 @@ export default async function PerfilPage({
             <>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[860px] text-left text-sm">
+                  <caption className="sr-only">Registros de auditoria da Administração</caption>
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>
                       <th className="px-5 py-3">Data/hora</th>
@@ -158,7 +161,13 @@ export default async function PerfilPage({
               </div>
             </>
           ) : (
-            <div className="px-5 py-8 text-sm text-slate-500">Nenhum registro de auditoria encontrado.</div>
+            <div className="px-5 py-8">
+              <EstadoVazio
+                descricao="As próximas ações realizadas no sistema aparecerão aqui."
+                icon={ClipboardList}
+                titulo="Nenhuma ação registrada ainda."
+              />
+            </div>
           )}
         </section>
       </div>
