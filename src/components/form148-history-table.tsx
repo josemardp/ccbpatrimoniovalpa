@@ -88,7 +88,7 @@ export function Form148HistoryTable({
         <p className="text-sm text-slate-500">Atualização inline por etapa do Form. 14.8.</p>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[940px] text-left text-sm">
+        <table aria-label="Histórico de status do Formulário 14.8" className="w-full min-w-[940px] text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
               <th className="px-5 py-3">Competência</th>

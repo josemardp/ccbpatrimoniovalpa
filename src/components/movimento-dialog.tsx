@@ -11,16 +11,18 @@ type CasaOption = {
   nome: string;
 };
 
-export function MovimentoDialog({ casas, hoje }: { casas: CasaOption[]; hoje: string }) {
+export function MovimentoDialog({ casas, hoje, returnTo }: { casas: CasaOption[]; hoje: string; returnTo: string }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   const { showToast } = useToast();
+  const defaultCasaDestinoId = casas[0]?.id ?? "";
 
   async function handleCreate(formData: FormData) {
     try {
       await criarMovimento(formData);
       showToast("Movimento registrado com sucesso.");
       dialogRef.current?.close();
+      router.replace(returnTo);
       router.refresh();
     } catch (error) {
       showToast(error instanceof Error ? error.message : "Falha ao registrar movimento.", "erro");
@@ -83,7 +85,11 @@ export function MovimentoDialog({ casas, hoje }: { casas: CasaOption[]; hoje: st
 
             <label className="block text-sm font-medium text-slate-700">
               Casa destino
-              <select className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm" name="casaDestinoId">
+              <select
+                className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+                defaultValue={defaultCasaDestinoId}
+                name="casaDestinoId"
+              >
                 <option value="">Sem destino</option>
                 {casas.map((casa) => (
                   <option key={casa.id} value={casa.id}>

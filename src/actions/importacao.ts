@@ -284,11 +284,6 @@ export async function confirmarImportacao(linhas: BemImportInput[], casaOracaoId
     for (const linha of linhasValidas) {
       const existing = existentesPorCodigo.get(linha.codigoInterno);
 
-      if (existing?.ativo === false) {
-        ignorados += 1;
-        continue;
-      }
-
       const data: Prisma.BemPatrimonialUncheckedCreateInput = {
         administracaoId: profile.administracaoId,
         casaOracaoId: linha.casaOracaoId ?? casaOracaoId,
@@ -302,6 +297,7 @@ export async function confirmarImportacao(linhas: BemImportInput[], casaOracaoId
         valorAquisicao: linha.valorAquisicao || null,
         estadoConservacao: linha.estadoConservacao,
         observacoes: linha.observacoes || null,
+        ativo: true,
         registradoPorId: profile.id,
       };
 
@@ -324,6 +320,7 @@ export async function confirmarImportacao(linhas: BemImportInput[], casaOracaoId
           valorAquisicao: data.valorAquisicao,
           estadoConservacao: data.estadoConservacao,
           observacoes: data.observacoes,
+          ativo: true,
           registradoPorId: profile.id,
         },
       });

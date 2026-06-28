@@ -133,7 +133,7 @@ async function Form148Tab({ ano, mes }: { ano: number; mes: number }) {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[920px] text-left text-sm">
+          <table aria-label="Relatório Form. 14.8 por Casa de Oração" className="w-full min-w-[920px] text-left text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-5 py-3">Casa</th>
@@ -246,7 +246,7 @@ async function InventarioTab({ casaId, categoria }: { casaId?: string; categoria
               </div>
               <div className="text-right text-sm font-semibold text-slate-950">{formatMoney(row.valorTotal)}</div>
             </div>
-            <table className="mt-4 w-full text-sm">
+            <table aria-label={`Estados de conservação de ${row.casa.codigoSiga}`} className="mt-4 w-full text-sm">
               <tbody className="divide-y divide-slate-100">
                 {Object.entries(ESTADO_LABELS).map(([estado, label]) => (
                   <tr key={estado}>
@@ -316,7 +316,7 @@ async function MovimentosTab({ ano, mes }: { ano: number; mes: number }) {
         </div>
         {relatorio.movimentos.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[920px] text-left text-sm">
+            <table aria-label="Movimentos do período" className="w-full min-w-[920px] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-5 py-3">Data</th>

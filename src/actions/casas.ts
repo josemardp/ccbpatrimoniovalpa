@@ -46,7 +46,7 @@ export async function updateCasa(id: string, dados: FormData | { anciaoCooperado
   }
 
   await prisma.casaOracao.update({
-    where: { id },
+    where: { id, administracaoId: profile.administracaoId },
     data: {
       anciaoCooperador,
       responsavelPatrimonio,
@@ -64,5 +64,5 @@ export async function updateCasa(id: string, dados: FormData | { anciaoCooperado
     },
   });
 
-  revalidatePath("/checklist");
+  revalidatePath("/checklist", "layout");
 }

@@ -8,6 +8,8 @@ import { prisma } from "@/lib/prisma";
 import { MESES_COMPLETOS } from "@/lib/sprint1";
 import { ArrowLeftRight } from "lucide-react";
 
+export const revalidate = 30;
+
 const TIPO_LABELS = {
   entrada: "Entrada",
   saida: "Saída",
@@ -59,6 +61,10 @@ function buildPageHref(filters: ReturnType<typeof parseFilters>, page: number) {
   return `/movimentos?${params.toString()}`;
 }
 
+function buildCurrentHref(filters: ReturnType<typeof parseFilters>) {
+  return buildPageHref(filters, filters.page);
+}
+
 export default async function MovimentosPage({
   searchParams,
 }: {
@@ -75,6 +81,7 @@ export default async function MovimentosPage({
     listMovimentos(filters),
   ]);
   const hoje = new Date().toISOString().slice(0, 10);
+  const currentHref = buildCurrentHref(filters);
 
   return (
     <AppShell subtitle="Movimentos" title="Movimentos Patrimoniais" userEmail={profile.email} userName={profile.nome}>
@@ -153,7 +160,7 @@ export default async function MovimentosPage({
               >
                 Exportar
               </a>
-              <MovimentoDialog casas={casas} hoje={hoje} />
+              <MovimentoDialog casas={casas} hoje={hoje} returnTo={currentHref} />
             </div>
           </div>
         </section>
@@ -168,7 +175,7 @@ export default async function MovimentosPage({
           {movimentos.length > 0 ? (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[980px] text-left text-sm">
+                <table aria-label="Lista de movimentos patrimoniais" className="w-full min-w-[980px] text-left text-sm">
                   <caption className="sr-only">Movimentos patrimoniais do período filtrado</caption>
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>

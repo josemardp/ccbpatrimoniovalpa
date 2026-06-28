@@ -182,7 +182,7 @@ export function ImportacaoSigaDialog({ casas }: { casas: CasaOption[] }) {
               </div>
 
               <div className="overflow-x-auto rounded-lg border border-slate-200">
-                <table className="w-full min-w-[760px] text-left text-sm">
+                <table aria-label="Prévia de bens válidos da importação SIGA" className="w-full min-w-[760px] text-left text-sm">
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>
                       <th className="px-4 py-3">Código</th>
@@ -210,7 +210,7 @@ export function ImportacaoSigaDialog({ casas }: { casas: CasaOption[] }) {
                 <details className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
                   <summary className="cursor-pointer font-medium text-amber-800">Ver erros</summary>
                   <div className="mt-3 max-h-48 overflow-y-auto">
-                    <table className="w-full text-left">
+                    <table aria-label="Erros de validação da importação SIGA" className="w-full text-left">
                       <thead className="text-xs uppercase tracking-wide text-amber-700">
                         <tr>
                           <th className="py-2 pr-3">Linha</th>

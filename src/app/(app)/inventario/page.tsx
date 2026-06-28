@@ -8,6 +8,8 @@ import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PackagePlus } from "lucide-react";
 
+export const revalidate = 30;
+
 const CATEGORIAS = ["Móveis", "Eletrônicos", "Instrumentos Musicais", "Veículos", "Imóveis", "Outros"] as const;
 
 const ESTADOS = [
@@ -229,7 +231,7 @@ export default async function InventarioPage({
           {bens.length > 0 ? (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[1040px] text-left text-sm">
+                <table aria-label="Lista de bens patrimoniais" className="w-full min-w-[1040px] text-left text-sm">
                   <caption className="sr-only">Bens patrimoniais ativos cadastrados</caption>
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>

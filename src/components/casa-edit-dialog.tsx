@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { updateCasa } from "@/actions/casas";
+import { useToast } from "@/components/toast";
 
 export function CasaEditDialog({
   casa,
@@ -15,6 +17,19 @@ export function CasaEditDialog({
   };
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  async function handleUpdate(formData: FormData) {
+    try {
+      await updateCasa(casa.id, formData);
+      showToast("Casa de Oração atualizada com sucesso.");
+      dialogRef.current?.close();
+      router.refresh();
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Falha ao atualizar Casa de Oração.", "erro");
+    }
+  }
 
   return (
     <>
@@ -25,11 +40,17 @@ export function CasaEditDialog({
       >
         Editar
       </button>
-      <dialog className="w-full max-w-lg rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40" ref={dialogRef}>
-        <form action={updateCasa.bind(null, casa.id)} className="p-6">
+      <dialog
+        aria-labelledby={`casa-edit-title-${casa.id}`}
+        className="w-full max-w-lg rounded-lg border border-slate-200 p-0 shadow-xl backdrop:bg-slate-950/40"
+        ref={dialogRef}
+      >
+        <form action={handleUpdate} className="p-6">
           <div className="border-b border-slate-100 pb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">{casa.codigoSiga}</p>
-            <h2 className="mt-1 text-lg font-semibold text-slate-950">{casa.nome}</h2>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950" id={`casa-edit-title-${casa.id}`}>
+              {casa.nome}
+            </h2>
           </div>
           <div className="mt-5 space-y-4">
             <label className="block text-sm font-medium text-slate-700">
@@ -67,4 +88,3 @@ export function CasaEditDialog({
     </>
   );
 }
-

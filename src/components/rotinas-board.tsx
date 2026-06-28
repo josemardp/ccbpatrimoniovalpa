@@ -227,7 +227,7 @@ export function RotinasBoard({
           <p className="text-sm text-slate-500">Competência {String(mes).padStart(2, "0")}/{ano}</p>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[840px] text-left text-sm">
+          <table aria-label="Status do Formulário 14.8 por Casa de Oração" className="w-full min-w-[840px] text-left text-sm">
             <caption className="sr-only">Status do Formulário 14.8 por Casa de Oração</caption>
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
@@ -274,7 +274,7 @@ export function RotinasBoard({
           <p className="text-sm text-slate-500">7 tarefas fixas × 12 meses. A coluna ativa está destacada.</p>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1120px] text-left text-sm">
+          <table aria-label="Controle Geral mensal com sete tarefas fixas" className="w-full min-w-[1120px] text-left text-sm">
             <caption className="sr-only">Controle Geral mensal com sete tarefas fixas</caption>
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>

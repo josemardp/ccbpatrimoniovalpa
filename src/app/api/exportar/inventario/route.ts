@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exportarInventarioCasa, exportarInventarioCompleto } from "@/actions/exportacao";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,12 @@ function downloadResponse(file: { buffer: Buffer; filename: string; contentType:
 }
 
 export async function GET(request: NextRequest) {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser || currentUser.profile.papel !== "gestor_adm") {
+    return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+  }
+
   const params = request.nextUrl.searchParams;
   const formato = params.get("formato") === "csv" ? "csv" : "xlsx";
   const completo = params.get("completo") === "true";

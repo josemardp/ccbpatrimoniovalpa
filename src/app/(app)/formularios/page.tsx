@@ -59,7 +59,7 @@ export default async function FormulariosPage({ searchParams }: { searchParams: 
             </p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[920px] text-left text-sm">
+            <table aria-label="Status dos Formulários 14.8 por Casa de Oração" className="w-full min-w-[920px] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-5 py-3">Casa</th>

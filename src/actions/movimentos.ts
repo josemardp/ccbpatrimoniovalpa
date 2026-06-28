@@ -166,5 +166,5 @@ export async function criarMovimento(dados: FormData) {
     },
   });
 
-  revalidatePath("/movimentos");
+  revalidatePath("/movimentos", "layout");
 }

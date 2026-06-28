@@ -119,7 +119,7 @@ export default async function PerfilPage({
           {logs.length > 0 ? (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[860px] text-left text-sm">
+                <table aria-label="Registros de auditoria da Administração" className="w-full min-w-[860px] text-left text-sm">
                   <caption className="sr-only">Registros de auditoria da Administração</caption>
                   <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                     <tr>

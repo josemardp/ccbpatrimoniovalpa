@@ -190,7 +190,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-slate-500">Base real seedada no banco da Administração.</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[620px] text-left text-sm">
+            <table aria-label="Casas de Oração cadastradas" className="w-full min-w-[620px] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-6 py-3">Código SIGA</th>
