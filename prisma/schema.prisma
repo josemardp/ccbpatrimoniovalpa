@@ -11,6 +11,22 @@ enum PapelUsuario {
   gestor_adm
 }
 
+enum StatusRotina {
+  vazio
+  ok
+  pendente
+  nao
+  na
+}
+
+enum EtapaForm148 {
+  elaborado
+  ass_min
+  ins_siga
+  pendencias
+  escaneado
+}
+
 model Administracao {
   id                    String       @id @default(cuid())
   nome                  String
@@ -25,6 +41,8 @@ model Administracao {
   casas                 CasaOracao[]
   usuarios              Usuario[]
   auditLogs             AuditLog[]
+  controlesMensais      ControleMensal[]
+  form148Statuses       Form148Status[]
 
   @@map("administracoes")
 }
@@ -43,6 +61,7 @@ model CasaOracao {
   updatedAt             DateTime      @updatedAt
   administracao         Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
   usuarios              Usuario[]
+  form148Statuses       Form148Status[]
 
   @@index([administracaoId])
   @@map("casas_oracao")
@@ -63,6 +82,8 @@ model Usuario {
   administracao   Administracao  @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
   casaOracao      CasaOracao?    @relation(fields: [casaOracaoId], references: [id], onDelete: SetNull)
   auditLogs       AuditLog[]
+  controlesMensaisAtualizados ControleMensal[] @relation("ControleMensalAtualizadoPor")
+  form148StatusesAtualizados  Form148Status[]  @relation("Form148StatusAtualizadoPor")
 
   @@index([administracaoId])
   @@index([casaOracaoId])
@@ -86,4 +107,42 @@ model AuditLog {
   @@index([administracaoId])
   @@index([entity, entityId])
   @@map("audit_log")
+}
+
+model Form148Status {
+  id              String        @id @default(cuid())
+  administracaoId String
+  casaOracaoId    String
+  competenciaAno  Int
+  competenciaMes  Int
+  etapa           EtapaForm148
+  status          StatusRotina  @default(vazio)
+  atualizadoPorId String?
+  atualizadoEm    DateTime      @updatedAt
+  createdAt       DateTime      @default(now())
+  administracao   Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  casaOracao      CasaOracao    @relation(fields: [casaOracaoId], references: [id], onDelete: Cascade)
+  atualizadoPor   Usuario?      @relation("Form148StatusAtualizadoPor", fields: [atualizadoPorId], references: [id], onDelete: SetNull)
+
+  @@unique([casaOracaoId, competenciaAno, competenciaMes, etapa])
+  @@index([administracaoId, competenciaAno, competenciaMes])
+  @@map("form_148_status")
+}
+
+model ControleMensal {
+  id              String        @id @default(cuid())
+  administracaoId String
+  tarefaId        String
+  competenciaAno  Int
+  competenciaMes  Int
+  status          StatusRotina  @default(vazio)
+  atualizadoPorId String?
+  atualizadoEm    DateTime      @updatedAt
+  createdAt       DateTime      @default(now())
+  administracao   Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  atualizadoPor   Usuario?      @relation("ControleMensalAtualizadoPor", fields: [atualizadoPorId], references: [id], onDelete: SetNull)
+
+  @@unique([administracaoId, tarefaId, competenciaAno, competenciaMes])
+  @@index([administracaoId, competenciaAno, competenciaMes])
+  @@map("controle_mensal")
 }
