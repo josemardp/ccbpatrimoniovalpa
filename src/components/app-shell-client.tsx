@@ -36,6 +36,7 @@ export function AppShellClient({
   title,
   subtitle,
   signOutAction,
+  pendenciasCount,
 }: {
   children: React.ReactNode;
   userName: string;
@@ -43,6 +44,7 @@ export function AppShellClient({
   title: string;
   subtitle: string;
   signOutAction: () => Promise<void>;
+  pendenciasCount: number;
 }) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -96,13 +98,26 @@ export function AppShellClient({
               <Link
                 className={`flex items-center rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white ${
                   collapsed ? "justify-center" : "gap-3"
-                }`}
+                } relative`}
                 href={item.href}
                 key={item.href}
                 title={collapsed ? item.label : undefined}
               >
                 <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                {!collapsed ? item.label : null}
+                {!collapsed ? (
+                  <>
+                    <span className="flex-1">{item.label}</span>
+                    {item.href === "/pendencias" && pendenciasCount > 0 ? (
+                      <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
+                        {pendenciasCount}
+                      </span>
+                    ) : null}
+                  </>
+                ) : item.href === "/pendencias" && pendenciasCount > 0 ? (
+                  <span className="absolute ml-5 mt-[-18px] rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                    {pendenciasCount}
+                  </span>
+                ) : null}
               </Link>
             );
           })}
@@ -142,6 +157,11 @@ export function AppShellClient({
                 key={item.href}
               >
                 {item.label}
+                {item.href === "/pendencias" && pendenciasCount > 0 ? (
+                  <span className="ml-2 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                    {pendenciasCount}
+                  </span>
+                ) : null}
               </Link>
             ))}
           </div>

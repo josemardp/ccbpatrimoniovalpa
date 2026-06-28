@@ -2,6 +2,7 @@ import { cache } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { requireGestorAdm } from "@/lib/auth";
+import { countPendenciasMesAnterior } from "@/lib/pendencias";
 import { prisma } from "@/lib/prisma";
 import { CONTROLE_TAREFAS, FORM_148_ETAPAS, MESES_COMPLETOS } from "@/lib/sprint1";
 import { AlertTriangle, ClipboardCheck, FileCheck2, ListChecks, Package } from "lucide-react";
@@ -98,7 +99,10 @@ export default async function DashboardPage() {
   const now = new Date();
   const ano = now.getFullYear();
   const mes = now.getMonth() + 1;
-  const dashboard = await getDashboardData(profile.administracaoId, ano, mes);
+  const [dashboard, pendenciasMesAnterior] = await Promise.all([
+    getDashboardData(profile.administracaoId, ano, mes),
+    countPendenciasMesAnterior(profile.administracaoId),
+  ]);
 
   return (
     <AppShell
@@ -108,6 +112,17 @@ export default async function DashboardPage() {
       userName={profile.nome}
     >
       <div className="space-y-6">
+        {pendenciasMesAnterior > 0 ? (
+          <section className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 shadow-sm">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <span>⚠ Existem {pendenciasMesAnterior} pendências do mês anterior em aberto.</span>
+              <Link className="font-semibold text-amber-900 hover:underline" href="/pendencias">
+                Ver pendências →
+              </Link>
+            </div>
+          </section>
+        ) : null}
+
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Competência atual</p>
           <h2 className="mt-1 text-xl font-semibold text-slate-950">

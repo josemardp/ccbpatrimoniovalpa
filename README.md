@@ -37,8 +37,13 @@ Preencha:
 DATABASE_URL="postgresql://..."
 NEXT_PUBLIC_SUPABASE_URL="https://seu-projeto.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="sua-chave-anon-publica"
+NEXT_PUBLIC_APP_URL="https://ccbpatrimoniovalpa.vercel.app"
+RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxx"
+CRON_SECRET="string-aleatoria-segura"
 SUPABASE_SERVICE_ROLE_KEY=""
 ```
+
+`RESEND_API_KEY` é gerada em resend.com no plano gratuito. `CRON_SECRET` deve ser uma string aleatória segura, por exemplo `openssl rand -base64 32`; o Vercel Cron chama `/api/cron/resumo-mensal` com `Authorization: Bearer $CRON_SECRET`.
 
 ## Setup local
 
@@ -120,6 +125,8 @@ npm run build
 1. Crie um projeto no Vercel apontando para este repositório.
 2. Configure as mesmas variáveis de ambiente.
 3. Rode a migration/seed contra o banco Supabase antes do primeiro login.
-4. Se o projeto Vercel estiver conectado ao repositório errado: no painel Vercel, acesse `Settings → Git → Disconnect → Connect Git Repository`, selecione `melindagpaula/ccbpatrimoniovalpa` e mantenha a branch `main`.
+4. Se o projeto Vercel estiver conectado ao repositório errado: no painel Vercel, acesse `Settings → Git → Disconnect → Connect Git Repository`, selecione `josemardp/ccbpatrimoniovalpa` e mantenha a branch `main`.
+
+O cron mensal está definido em `vercel.json` e executa `0 8 1 * *`, às 8h do dia 1º de cada mês.
 
 O deploy público não foi executado na Sprint 0 local porque exige credenciais da conta Vercel/Supabase.
