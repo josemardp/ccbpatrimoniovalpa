@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PapelUsuario {
+  gestor_adm
+}
+
+model Administracao {
+  id                    String       @id @default(cuid())
+  nome                  String
+  cidade                String
+  uf                    String       @default("SP")
+  cnpj                  String       @unique
+  responsavelPatrimonio String
+  regional              String
+  ativa                 Boolean      @default(true)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  casas                 CasaOracao[]
+  usuarios              Usuario[]
+  auditLogs             AuditLog[]
+
+  @@map("administracoes")
+}
+
+model CasaOracao {
+  id                    String        @id @default(cuid())
+  administracaoId       String
+  codigoSiga            String        @unique
+  nome                  String
+  cidade                String
+  uf                    String        @default("SP")
+  anciaoCooperador      String?
+  responsavelPatrimonio String?
+  ativa                 Boolean       @default(true)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  administracao         Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  usuarios              Usuario[]
+
+  @@index([administracaoId])
+  @@map("casas_oracao")
+}
+
+model Usuario {
+  id              String         @id @default(cuid())
+  authUserId      String?        @unique
+  administracaoId String
+  casaOracaoId    String?
+  nome            String
+  email           String         @unique
+  papel           PapelUsuario   @default(gestor_adm)
+  ativo           Boolean        @default(true)
+  lastLoginAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  administracao   Administracao  @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  casaOracao      CasaOracao?    @relation(fields: [casaOracaoId], references: [id], onDelete: SetNull)
+  auditLogs       AuditLog[]
+
+  @@index([administracaoId])
+  @@index([casaOracaoId])
+  @@map("usuarios")
+}
+
+model AuditLog {
+  id              String         @id @default(cuid())
+  usuarioId       String?
+  administracaoId String?
+  action          String
+  entity          String
+  entityId        String?
+  ip              String?
+  metadata        Json?
+  createdAt       DateTime       @default(now())
+  usuario         Usuario?       @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  administracao   Administracao? @relation(fields: [administracaoId], references: [id], onDelete: SetNull)
+
+  @@index([usuarioId])
+  @@index([administracaoId])
+  @@index([entity, entityId])
+  @@map("audit_log")
+}
