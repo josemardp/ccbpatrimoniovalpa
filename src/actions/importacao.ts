@@ -10,6 +10,7 @@ import { prisma } from "@/lib/prisma";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_ROWS = 1000;
 const ESTADOS: EstadoConservacao[] = ["otimo", "bom", "regular", "ruim", "descartado"];
+const CATEGORIAS = ["Móveis", "Eletrônicos", "Instrumentos Musicais", "Veículos", "Imóveis", "Outros"] as const;
 
 async function requireGestorForAction() {
   const currentUser = await getCurrentUser();
@@ -194,6 +195,7 @@ export async function parsearExcelSiga(formData: FormData): Promise<ImportacaoPr
       valorAquisicao: normalizeMoney(getByAliases(row, ["valor", "vl aquisicao", "valor aquisicao"])),
       estadoConservacao: normalizeEstado(getByAliases(row, ["conservacao", "estado", "situacao"])),
       casaOracaoId: casaId,
+      observacoes: normalizeText(getByAliases(row, ["observacoes", "observacao", "obs"])) || null,
     });
   });
 
@@ -204,6 +206,42 @@ function dateFromString(value?: string | null) {
   if (!value) return null;
   const date = new Date(`${value}T12:00:00`);
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function validarLinhaImportacao(linha: BemImportInput, linhaNumero: number, casasValidas: Set<string>, casaFallback: string) {
+  const erros: string[] = [];
+  const codigoInterno = normalizeText(linha.codigoInterno);
+  const descricao = normalizeText(linha.descricao);
+  const categoria = normalizeText(linha.categoria);
+  const observacoes = normalizeText(linha.observacoes);
+  const casaOracaoId = linha.casaOracaoId && casasValidas.has(linha.casaOracaoId) ? linha.casaOracaoId : casaFallback;
+
+  if (!codigoInterno) erros.push("Código/Nº Patrimônio vazio");
+  if (codigoInterno.length > 50) erros.push("Código/Nº Patrimônio maior que 50 caracteres");
+  if (!descricao) erros.push("Descrição vazia");
+  if (descricao.length > 500) erros.push("Descrição maior que 500 caracteres");
+  if (!CATEGORIAS.includes(categoria as (typeof CATEGORIAS)[number])) erros.push("Categoria inválida");
+  if (!ESTADOS.includes(linha.estadoConservacao)) erros.push("Estado de conservação inválido");
+  if (observacoes.length > 1000) erros.push("Observações maior que 1000 caracteres");
+
+  if (erros.length > 0) {
+    return {
+      erro: { linha: linhaNumero, motivo: erros.join("; ") } satisfies ImportacaoErro,
+      linha: null,
+    };
+  }
+
+  return {
+    erro: null,
+    linha: {
+      ...linha,
+      codigoInterno,
+      descricao,
+      categoria,
+      observacoes: observacoes || null,
+      casaOracaoId,
+    },
+  };
 }
 
 export async function confirmarImportacao(linhas: BemImportInput[], casaOracaoId: string) {
@@ -221,48 +259,61 @@ export async function confirmarImportacao(linhas: BemImportInput[], casaOracaoId
   let importados = 0;
   let atualizados = 0;
   let ignorados = 0;
-
-  for (const linha of linhas.slice(0, MAX_ROWS)) {
-    const casaId = linha.casaOracaoId && casasValidas.has(linha.casaOracaoId) ? linha.casaOracaoId : casaOracaoId;
-    if (!linha.codigoInterno || !linha.descricao) {
+  const erros: ImportacaoErro[] = [];
+  const linhasValidas = linhas.slice(0, MAX_ROWS).flatMap((linha, index) => {
+    const result = validarLinhaImportacao(linha, index + 1, casasValidas, casaOracaoId);
+    if (result.erro) {
+      erros.push(result.erro);
       ignorados += 1;
-      continue;
+      return [];
     }
 
-    const existing = await prisma.bemPatrimonial.findUnique({
+    return [result.linha];
+  });
+
+  await prisma.$transaction(async (tx) => {
+    const existentes = await tx.bemPatrimonial.findMany({
       where: {
-        administracaoId_codigoInterno: {
-          administracaoId: profile.administracaoId,
-          codigoInterno: linha.codigoInterno,
-        },
+        administracaoId: profile.administracaoId,
+        codigoInterno: { in: linhasValidas.map((linha) => linha.codigoInterno) },
       },
-      select: { id: true, ativo: true },
+      select: { codigoInterno: true, ativo: true },
     });
+    const existentesPorCodigo = new Map(existentes.map((bem) => [bem.codigoInterno, bem]));
 
-    const data: Prisma.BemPatrimonialUncheckedCreateInput = {
-      administracaoId: profile.administracaoId,
-      casaOracaoId: casaId,
-      codigoInterno: linha.codigoInterno,
-      descricao: linha.descricao,
-      categoria: linha.categoria || "Outros",
-      marca: linha.marca || null,
-      modelo: linha.modelo || null,
-      numeroSerie: linha.numeroSerie || null,
-      dataAquisicao: dateFromString(linha.dataAquisicao),
-      valorAquisicao: linha.valorAquisicao || null,
-      estadoConservacao: linha.estadoConservacao,
-      registradoPorId: profile.id,
-    };
+    for (const linha of linhasValidas) {
+      const existing = existentesPorCodigo.get(linha.codigoInterno);
 
-    if (existing?.ativo === false) {
-      ignorados += 1;
-      continue;
-    }
+      if (existing?.ativo === false) {
+        ignorados += 1;
+        continue;
+      }
 
-    if (existing) {
-      await prisma.bemPatrimonial.update({
-        where: { id: existing.id },
-        data: {
+      const data: Prisma.BemPatrimonialUncheckedCreateInput = {
+        administracaoId: profile.administracaoId,
+        casaOracaoId: linha.casaOracaoId ?? casaOracaoId,
+        codigoInterno: linha.codigoInterno,
+        descricao: linha.descricao,
+        categoria: linha.categoria,
+        marca: linha.marca || null,
+        modelo: linha.modelo || null,
+        numeroSerie: linha.numeroSerie || null,
+        dataAquisicao: dateFromString(linha.dataAquisicao),
+        valorAquisicao: linha.valorAquisicao || null,
+        estadoConservacao: linha.estadoConservacao,
+        observacoes: linha.observacoes || null,
+        registradoPorId: profile.id,
+      };
+
+      await tx.bemPatrimonial.upsert({
+        where: {
+          administracaoId_codigoInterno: {
+            administracaoId: profile.administracaoId,
+            codigoInterno: linha.codigoInterno,
+          },
+        },
+        create: data,
+        update: {
           casaOracaoId: data.casaOracaoId,
           descricao: data.descricao,
           categoria: data.categoria,
@@ -272,15 +323,18 @@ export async function confirmarImportacao(linhas: BemImportInput[], casaOracaoId
           dataAquisicao: data.dataAquisicao,
           valorAquisicao: data.valorAquisicao,
           estadoConservacao: data.estadoConservacao,
+          observacoes: data.observacoes,
           registradoPorId: profile.id,
         },
       });
-      atualizados += 1;
-    } else {
-      await prisma.bemPatrimonial.create({ data });
-      importados += 1;
+
+      if (existing) {
+        atualizados += 1;
+      } else {
+        importados += 1;
+      }
     }
-  }
+  });
 
   await prisma.auditLog.create({
     data: {
@@ -288,12 +342,12 @@ export async function confirmarImportacao(linhas: BemImportInput[], casaOracaoId
       administracaoId: profile.administracaoId,
       action: "bem_patrimonial.import_siga",
       entity: "BemPatrimonial",
-      metadata: { importados, atualizados, ignorados },
+      metadata: { importados, atualizados, ignorados, erros: erros.length },
     },
   });
 
   revalidatePath("/dashboard");
   revalidatePath("/inventario");
 
-  return { importados, atualizados, ignorados };
+  return { importados, atualizados, ignorados, erros };
 }

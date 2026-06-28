@@ -11,6 +11,7 @@ export type BemImportInput = {
   valorAquisicao?: string | null;
   estadoConservacao: EstadoConservacao;
   casaOracaoId?: string | null;
+  observacoes?: string | null;
 };
 
 export type ImportacaoErro = {

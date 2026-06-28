@@ -33,9 +33,13 @@ async function countPendenciasAbertasRaw(administracaoId: string) {
   return formPendentes + controlePendentes;
 }
 
-export const countPendenciasAbertas = unstable_cache(countPendenciasAbertasRaw, ["pendencias-abertas"], {
-  revalidate: 300,
-});
+export function countPendenciasAbertas(administracaoId: string) {
+  return unstable_cache(
+    () => countPendenciasAbertasRaw(administracaoId),
+    [`pendencias-abertas-${administracaoId}`],
+    { revalidate: 300 },
+  )();
+}
 
 export async function countPendenciasMesAnterior(administracaoId: string) {
   const anterior = previousCompetencia();

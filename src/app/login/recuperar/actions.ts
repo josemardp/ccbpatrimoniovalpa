@@ -1,6 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -11,7 +10,7 @@ export async function solicitarRecuperacao(formData: FormData) {
     redirect("/login/recuperar?status=missing");
   }
 
-  const origin = headers().get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const supabase = createSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/login/nova-senha`,

@@ -5,6 +5,19 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+function getClientIp() {
+  const forwardedFor = headers().get("x-forwarded-for");
+  if (forwardedFor) {
+    const ips = forwardedFor
+      .split(",")
+      .map((ip) => ip.trim())
+      .filter(Boolean);
+    return ips.at(-1) ?? null;
+  }
+
+  return headers().get("x-real-ip");
+}
+
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
@@ -45,8 +58,8 @@ export async function signIn(formData: FormData) {
       action: "auth.sign_in",
       entity: "Usuario",
       entityId: usuario.id,
-      ip: headers().get("x-forwarded-for"),
-      metadata: { email },
+      ip: getClientIp(),
+      metadata: {},
     },
   });
 

@@ -78,12 +78,15 @@ export default async function FormularioCasaPage({
     }),
     listDocumentos(params.casaId, competencia.ano, competencia.mes),
   ]);
-  const documentosComUrl = await Promise.all(
+  const documentosComUrl = await Promise.allSettled(
     documentos.map(async (documento) => ({
       ...documento,
       signedUrl: await getDocumentoUrl(documento.storagePath),
     })),
   );
+  const documentosResolvidos = documentosComUrl
+    .filter((result) => result.status === "fulfilled")
+    .map((result) => result.value);
 
   if (!casa) {
     return (
@@ -134,7 +137,7 @@ export default async function FormularioCasaPage({
             </div>
             <DocumentoUploadDialog casaId={casa.id} ano={competencia.ano} mes={competencia.mes} />
           </div>
-          {documentosComUrl.length > 0 ? (
+          {documentosResolvidos.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px] text-left text-sm">
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
@@ -147,7 +150,7 @@ export default async function FormularioCasaPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {documentosComUrl.map((documento) => (
+                  {documentosResolvidos.map((documento) => (
                     <tr key={documento.id}>
                       <td className="px-5 py-4">
                         <div className="font-medium text-slate-950">{documento.nomeOriginal}</div>

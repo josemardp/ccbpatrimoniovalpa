@@ -213,18 +213,20 @@ export async function atualizarBem(id: string, dados: FormData) {
   const data = dataFromFormData(dados);
   await ensureCasaBelongsToAdmin(data.casaOracaoId, profile.administracaoId);
 
-  const existing = await prisma.bemPatrimonial.findFirst({
-    where: { id, administracaoId: profile.administracaoId, ativo: true },
-    select: { id: true },
-  });
+  await prisma.$transaction(async (tx) => {
+    const existing = await tx.bemPatrimonial.findFirst({
+      where: { id, administracaoId: profile.administracaoId, ativo: true },
+      select: { id: true },
+    });
 
-  if (!existing) {
-    throw new Error("Bem patrimonial inválido para esta Administração.");
-  }
+    if (!existing) {
+      throw new Error("Bem patrimonial inválido para esta Administração.");
+    }
 
-  await prisma.bemPatrimonial.update({
-    where: { id },
-    data,
+    await tx.bemPatrimonial.update({
+      where: { id, administracaoId: profile.administracaoId },
+      data,
+    });
   });
 
   await prisma.auditLog.create({

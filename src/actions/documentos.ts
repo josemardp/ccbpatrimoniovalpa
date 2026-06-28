@@ -9,6 +9,7 @@ import { updateForm148Status } from "@/actions/rotinas";
 
 const BUCKET = "documentos";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const TIPOS_DOCUMENTO = ["form148", "comprovante", "contrato", "outro"] as const;
 
 async function requireGestorForAction() {
   const currentUser = await getCurrentUser();
@@ -43,6 +44,11 @@ function validateCompetencia(ano: number, mes: number) {
   }
 }
 
+function parseTipoDocumento(value: FormDataEntryValue | null) {
+  const parsed = String(value ?? "form148").trim();
+  return TIPOS_DOCUMENTO.includes(parsed as (typeof TIPOS_DOCUMENTO)[number]) ? parsed : "outro";
+}
+
 async function validatePdf(file: File) {
   const lowerName = file.name.toLowerCase();
 
@@ -70,7 +76,7 @@ export async function uploadDocumento(formData: FormData) {
   const casaId = String(formData.get("casaId") ?? "");
   const ano = parseNumber(formData.get("ano"), "Ano");
   const mes = parseNumber(formData.get("mes"), "Mês");
-  const tipo = String(formData.get("tipo") ?? "form148");
+  const tipo = parseTipoDocumento(formData.get("tipo"));
   const arquivo = formData.get("arquivo");
 
   validateCompetencia(ano, mes);
@@ -146,6 +152,15 @@ export async function uploadDocumento(formData: FormData) {
 export async function listDocumentos(casaId: string, ano: number, mes: number) {
   const profile = await requireGestorForAction();
   validateCompetencia(ano, mes);
+
+  const casa = await prisma.casaOracao.findFirst({
+    where: { id: casaId, administracaoId: profile.administracaoId },
+    select: { id: true },
+  });
+
+  if (!casa) {
+    throw new Error("Casa não encontrada");
+  }
 
   return prisma.documento.findMany({
     where: {

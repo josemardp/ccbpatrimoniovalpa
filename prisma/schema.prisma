@@ -190,6 +190,7 @@ model Documento {
   uploadadoPor    Usuario?      @relation(fields: [uploadadoPorId], references: [id], onDelete: SetNull)
 
   @@index([casaOracaoId, competenciaAno, competenciaMes])
+  @@index([administracaoId, storagePath])
   @@map("documentos")
 }
 

@@ -84,7 +84,7 @@ export async function enviarResumoMensal(destinatario: string, dados: ResumoPend
   const competencia = `${MESES[dados.mes - 1]}/${dados.ano}`;
 
   return resend.emails.send({
-    from: "patrimonio@ccb.notificacoes",
+    from: "CCB Patrimônio <onboarding@resend.dev>",
     to: destinatario,
     subject: `CCB Patrimônio — Resumo de pendências ${competencia}`,
     html: montarResumoMensalHtml(dados),
