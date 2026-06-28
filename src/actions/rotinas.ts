@@ -112,6 +112,7 @@ export async function updateForm148Status(
 
   revalidatePath("/dashboard");
   revalidatePath("/rotinas");
+  revalidatePath("/formularios");
   revalidatePath("/pendencias");
 }
 
@@ -170,4 +171,3 @@ export async function updateControleMensal(
   revalidatePath("/rotinas");
   revalidatePath("/pendencias");
 }
-
