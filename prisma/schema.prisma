@@ -35,6 +35,14 @@ enum TipoMovimento {
   baixa
 }
 
+enum EstadoConservacao {
+  otimo
+  bom
+  regular
+  ruim
+  descartado
+}
+
 model Administracao {
   id                    String           @id @default(cuid())
   nome                  String
@@ -53,28 +61,30 @@ model Administracao {
   form148Statuses       Form148Status[]
   documentos            Documento[]
   movimentos            Movimento[]
+  bensPatrimoniais      BemPatrimonial[]
 
   @@map("administracoes")
 }
 
 model CasaOracao {
-  id                    String          @id @default(cuid())
+  id                    String           @id @default(cuid())
   administracaoId       String
-  codigoSiga            String          @unique
+  codigoSiga            String           @unique
   nome                  String
   cidade                String
-  uf                    String          @default("SP")
+  uf                    String           @default("SP")
   anciaoCooperador      String?
   responsavelPatrimonio String?
-  ativa                 Boolean         @default(true)
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
-  administracao         Administracao   @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  ativa                 Boolean          @default(true)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  administracao         Administracao    @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
   usuarios              Usuario[]
   form148Statuses       Form148Status[]
   documentos            Documento[]
-  movimentosOrigem      Movimento[]     @relation("MovimentoOrigem")
-  movimentosDestino     Movimento[]     @relation("MovimentoDestino")
+  movimentosOrigem      Movimento[]      @relation("MovimentoOrigem")
+  movimentosDestino     Movimento[]      @relation("MovimentoDestino")
+  bensPatrimoniais      BemPatrimonial[]
 
   @@index([administracaoId])
   @@map("casas_oracao")
@@ -99,6 +109,7 @@ model Usuario {
   form148StatusesAtualizados  Form148Status[]  @relation("Form148StatusAtualizadoPor")
   documentosUploadados        Documento[]
   movimentosRegistrados       Movimento[]
+  bensRegistrados             BemPatrimonial[]
 
   @@index([administracaoId])
   @@index([casaOracaoId])
@@ -201,4 +212,32 @@ model Movimento {
 
   @@index([administracaoId, dataMovimento])
   @@map("movimentos")
+}
+
+model BemPatrimonial {
+  id                String            @id @default(cuid())
+  administracaoId   String
+  casaOracaoId      String
+  codigoInterno     String
+  descricao         String
+  categoria         String
+  marca             String?
+  modelo            String?
+  numeroSerie       String?
+  dataAquisicao     DateTime?
+  valorAquisicao    Decimal?          @db.Decimal(12, 2)
+  estadoConservacao EstadoConservacao @default(bom)
+  observacoes       String?
+  ativo             Boolean           @default(true)
+  registradoPorId   String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  administracao     Administracao     @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  casaOracao        CasaOracao        @relation(fields: [casaOracaoId], references: [id], onDelete: Cascade)
+  registradoPor     Usuario?          @relation(fields: [registradoPorId], references: [id], onDelete: SetNull)
+
+  @@unique([administracaoId, codigoInterno])
+  @@index([casaOracaoId])
+  @@index([administracaoId, categoria])
+  @@map("bens_patrimoniais")
 }

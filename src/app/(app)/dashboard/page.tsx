@@ -8,7 +8,7 @@ import { AlertTriangle, ClipboardCheck, FileCheck2, ListChecks, Package } from "
 const CHECKLIST_TASK_ID = "t6_checklist_siga";
 
 const getDashboardData = cache(async (administracaoId: string, ano: number, mes: number) => {
-  const [casas, formMesAtual, pendenciasForm, pendenciasControle, formulariosConcluidos, controlesMes] =
+  const [casas, formMesAtual, pendenciasForm, pendenciasControle, formulariosConcluidos, controlesMes, totalBensAtivos] =
     await Promise.all([
       prisma.casaOracao.findMany({
         where: { administracaoId, ativa: true },
@@ -31,6 +31,9 @@ const getDashboardData = cache(async (administracaoId: string, ano: number, mes:
       prisma.controleMensal.findMany({
         where: { administracaoId, competenciaAno: ano, competenciaMes: mes },
         select: { tarefaId: true, status: true },
+      }),
+      prisma.bemPatrimonial.count({
+        where: { administracaoId, ativo: true },
       }),
     ]);
 
@@ -56,6 +59,7 @@ const getDashboardData = cache(async (administracaoId: string, ano: number, mes:
     casasEmDia,
     pendenciasAbertas: pendenciasForm + pendenciasControle,
     formulariosConcluidos,
+    totalBensAtivos,
     tarefasPercentual: Math.round((tarefasOk / CONTROLE_TAREFAS.length) * 100),
     checklistStatus,
   };
@@ -113,7 +117,7 @@ export default async function DashboardPage() {
           </p>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
           <KpiCard
             hint="Todas as 5 etapas do Form. 14.8 marcadas como OK"
             icon={FileCheck2}
@@ -143,6 +147,12 @@ export default async function DashboardPage() {
             icon={Package}
             label="Checklist SIGA"
             value={dashboard.checklistStatus}
+          />
+          <KpiCard
+            hint="Bens patrimoniais ativos cadastrados manualmente"
+            icon={Package}
+            label="Total de bens ativos"
+            value={String(dashboard.totalBensAtivos)}
           />
         </section>
 
