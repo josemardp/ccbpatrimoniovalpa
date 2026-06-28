@@ -192,7 +192,7 @@ function DialogShell({
   );
 }
 
-export function NovoBemDialog({ casas }: { casas: CasaOption[] }) {
+export function NovoBemDialog({ casas, returnTo }: { casas: CasaOption[]; returnTo?: string }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   const { showToast } = useToast();
@@ -202,6 +202,9 @@ export function NovoBemDialog({ casas }: { casas: CasaOption[] }) {
       await criarBem(formData);
       showToast("Bem cadastrado com sucesso.");
       dialogRef.current?.close();
+      if (returnTo) {
+        router.replace(returnTo);
+      }
       router.refresh();
     } catch (error) {
       showToast(error instanceof Error ? error.message : "Falha ao cadastrar bem.", "erro");
@@ -238,7 +241,7 @@ export function NovoBemDialog({ casas }: { casas: CasaOption[] }) {
   );
 }
 
-export function BemAcoes({ bem, casas }: { bem: BemFormData; casas: CasaOption[] }) {
+export function BemAcoes({ bem, casas, returnTo }: { bem: BemFormData; casas: CasaOption[]; returnTo?: string }) {
   const editDialogRef = useRef<HTMLDialogElement>(null);
   const deactivateDialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
@@ -249,6 +252,9 @@ export function BemAcoes({ bem, casas }: { bem: BemFormData; casas: CasaOption[]
       await atualizarBem(bem.id, formData);
       showToast("Bem atualizado com sucesso.");
       editDialogRef.current?.close();
+      if (returnTo) {
+        router.replace(returnTo);
+      }
       router.refresh();
     } catch (error) {
       showToast(error instanceof Error ? error.message : "Falha ao atualizar bem.", "erro");
@@ -260,6 +266,9 @@ export function BemAcoes({ bem, casas }: { bem: BemFormData; casas: CasaOption[]
       await desativarBem(bem.id);
       showToast("Bem desativado com sucesso.");
       deactivateDialogRef.current?.close();
+      if (returnTo) {
+        router.replace(returnTo);
+      }
       router.refresh();
     } catch (error) {
       showToast(error instanceof Error ? error.message : "Falha ao desativar bem.", "erro");

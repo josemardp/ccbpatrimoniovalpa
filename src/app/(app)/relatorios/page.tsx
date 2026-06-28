@@ -82,7 +82,7 @@ function TabNav({ activeTab }: { activeTab: RelatorioTab }) {
   return (
     <nav className="flex flex-wrap gap-2" data-print-hide>
       {TABS.map((tab) => (
-        <Link
+        <a
           className={`rounded-md border px-3 py-2 text-sm font-medium ${
             activeTab === tab.id
               ? "border-blue-200 bg-blue-50 text-blue-700"
@@ -92,7 +92,7 @@ function TabNav({ activeTab }: { activeTab: RelatorioTab }) {
           key={tab.id}
         >
           {tab.label}
-        </Link>
+        </a>
       ))}
     </nav>
   );

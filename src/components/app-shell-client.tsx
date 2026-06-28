@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { InstallAppButton } from "@/components/install-app-button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import {
   BarChart3,
   Bell,
@@ -50,6 +50,7 @@ export function AppShellClient({
   pendenciasCount: number;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -74,6 +75,15 @@ export function AppShellClient({
       localStorage.setItem("ccb.sidebar.collapsed", next ? "1" : "0");
       return next;
     });
+  }
+
+  function handleDesktopNavigation(event: MouseEvent<HTMLAnchorElement>, href: string) {
+    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    router.push(href);
   }
 
   return (
@@ -121,6 +131,7 @@ export function AppShellClient({
                 } relative`}
                 href={item.href}
                 key={item.href}
+                onClick={(event) => handleDesktopNavigation(event, item.href)}
                 title={collapsed ? item.label : undefined}
               >
                 <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />

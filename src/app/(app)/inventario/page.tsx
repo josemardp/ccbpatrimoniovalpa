@@ -63,6 +63,10 @@ function buildPageHref(filters: ReturnType<typeof parseFilters>, page: number) {
   return `/inventario?${params.toString()}`;
 }
 
+function buildCurrentHref(filters: ReturnType<typeof parseFilters>) {
+  return buildPageHref(filters, filters.page);
+}
+
 function formatMoney(value: { toNumber: () => number } | null) {
   if (!value) {
     return "-";
@@ -95,6 +99,7 @@ export default async function InventarioPage({
 }) {
   const { profile } = await requireGestorAdm();
   const filters = parseFilters(searchParams);
+  const currentHref = buildCurrentHref(filters);
   const [casas, bens] = await Promise.all([
     prisma.casaOracao.findMany({
       where: { administracaoId: profile.administracaoId, ativa: true },
@@ -211,7 +216,7 @@ export default async function InventarioPage({
                 </div>
               </details>
               <ImportacaoSigaDialog casas={casas} />
-              <NovoBemDialog casas={casas} />
+              <NovoBemDialog casas={casas} returnTo={currentHref} />
             </div>
           </div>
         </section>
@@ -262,7 +267,7 @@ export default async function InventarioPage({
                         </td>
                         <td className="whitespace-nowrap px-5 py-4 text-slate-600">{formatMoney(bem.valorAquisicao)}</td>
                         <td className="px-5 py-4 text-right">
-                          <BemAcoes bem={toBemFormData(bem)} casas={casas} />
+                          <BemAcoes bem={toBemFormData(bem)} casas={casas} returnTo={currentHref} />
                         </td>
                       </tr>
                     ))}
