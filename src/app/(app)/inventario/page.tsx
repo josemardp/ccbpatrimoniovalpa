@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listBens } from "@/actions/inventario";
 import { AppShell } from "@/components/app-shell";
 import { BemAcoes, NovoBemDialog, type BemFormData } from "@/components/bem-dialogs";
+import { ImportacaoSigaDialog } from "@/components/importacao-siga-dialog";
 import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -170,7 +171,10 @@ export default async function InventarioPage({
               </button>
             </form>
 
-            <NovoBemDialog casas={casas} />
+            <div className="flex flex-wrap gap-2">
+              <ImportacaoSigaDialog casas={casas} />
+              <NovoBemDialog casas={casas} />
+            </div>
           </div>
         </section>
 
