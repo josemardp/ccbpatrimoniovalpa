@@ -8,6 +8,7 @@ import { CONTROLE_TAREFAS, FORM_148_ETAPAS, STATUS_LABELS, type StatusRotinaKey 
 const XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 function parseCompetencia(params: URLSearchParams) {
   const now = new Date();

@@ -7,6 +7,7 @@ import { checkRateLimit, getIpFromHeaders } from "@/lib/rate-limit";
 const XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 const TIPO_LABELS = {
   entrada: "Entrada",

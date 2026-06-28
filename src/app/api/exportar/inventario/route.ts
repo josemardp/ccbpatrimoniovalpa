@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { checkRateLimit, getIpFromHeaders } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 function downloadResponse(file: { buffer: Buffer; filename: string; contentType: string }) {
   return new Response(new Uint8Array(file.buffer), {

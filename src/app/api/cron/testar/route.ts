@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { montarResumoMensalHtml } from "@/lib/email";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export async function GET() {
   if (process.env.NODE_ENV !== "development") {
     return new NextResponse(null, { status: 404 });

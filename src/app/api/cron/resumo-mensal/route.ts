@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { CONTROLE_TAREFAS, FORM_148_ETAPAS } from "@/lib/sprint1";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 function appUrl() {
   if (process.env.NEXT_PUBLIC_APP_URL) {
