@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { getDocumentoUrl, listDocumentos } from "@/actions/documentos";
 import { AppShell } from "@/components/app-shell";
+import { DocumentoUploadDialog } from "@/components/documento-upload-dialog";
 import { Form148HistoryTable } from "@/components/form148-history-table";
 import { requireGestorAdm } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -33,6 +35,14 @@ function ultimasCompetencias(ano: number, mes: number) {
   return competencias;
 }
 
+function formatBytes(bytes: number) {
+  if (bytes < 1024 * 1024) {
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  }
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default async function FormularioCasaPage({
   params,
   searchParams,
@@ -44,7 +54,7 @@ export default async function FormularioCasaPage({
   const competencia = parseCompetencia(searchParams);
   const competencias = ultimasCompetencias(competencia.ano, competencia.mes);
   const oldest = competencias[competencias.length - 1];
-  const [casa, statuses] = await Promise.all([
+  const [casa, statuses, documentos] = await Promise.all([
     prisma.casaOracao.findFirst({
       where: { id: params.casaId, administracaoId: profile.administracaoId },
       select: { id: true, codigoSiga: true, nome: true, cidade: true },
@@ -66,7 +76,14 @@ export default async function FormularioCasaPage({
       },
       select: { competenciaAno: true, competenciaMes: true, etapa: true, status: true },
     }),
+    listDocumentos(params.casaId, competencia.ano, competencia.mes),
   ]);
+  const documentosComUrl = await Promise.all(
+    documentos.map(async (documento) => ({
+      ...documento,
+      signedUrl: await getDocumentoUrl(documento.storagePath),
+    })),
+  );
 
   if (!casa) {
     return (
@@ -106,6 +123,64 @@ export default async function FormularioCasaPage({
         </section>
 
         <Form148HistoryTable casaId={casa.id} competencias={competencias} statuses={statuses} />
+
+        <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-950">Documentos</h2>
+              <p className="text-sm text-slate-500">
+                Formulários escaneados da competência {String(competencia.mes).padStart(2, "0")}/{competencia.ano}.
+              </p>
+            </div>
+            <DocumentoUploadDialog casaId={casa.id} ano={competencia.ano} mes={competencia.mes} />
+          </div>
+          {documentosComUrl.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[720px] text-left text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-5 py-3">Documento</th>
+                    <th className="px-5 py-3">Tipo</th>
+                    <th className="px-5 py-3">Data</th>
+                    <th className="px-5 py-3">Tamanho</th>
+                    <th className="px-5 py-3 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {documentosComUrl.map((documento) => (
+                    <tr key={documento.id}>
+                      <td className="px-5 py-4">
+                        <div className="font-medium text-slate-950">{documento.nomeOriginal}</div>
+                        <div className="text-xs text-slate-500">
+                          Enviado por {documento.uploadadoPor?.nome ?? documento.uploadadoPor?.email ?? "gestor"}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 uppercase text-slate-600">{documento.tipo}</td>
+                      <td className="px-5 py-4 text-slate-600">
+                        {documento.createdAt.toLocaleDateString("pt-BR")}
+                      </td>
+                      <td className="px-5 py-4 text-slate-600">{formatBytes(documento.tamanhoBytes)}</td>
+                      <td className="px-5 py-4 text-right">
+                        <a
+                          className="rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                          href={documento.signedUrl}
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          Visualizar
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="px-5 py-8 text-sm text-slate-500">
+              Nenhum documento enviado para esta competência.
+            </div>
+          )}
+        </section>
       </div>
     </AppShell>
   );

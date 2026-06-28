@@ -80,6 +80,13 @@ O comando `npx prisma db seed` cria:
 
 Execute `supabase/storage.sql` no SQL Editor do Supabase para criar o bucket privado `documentos` e políticas básicas para usuários autenticados.
 
+Este passo é pré-requisito para o deploy da Sprint 4, pois o upload do Form. 14.8 escaneado usa o bucket privado `documentos`. Após configurar as variáveis de ambiente do projeto, rode também:
+
+```bash
+npx prisma migrate deploy
+npx prisma db seed
+```
+
 ## Rotas
 
 - `/login`
@@ -111,4 +118,3 @@ npm run build
 3. Rode a migration/seed contra o banco Supabase antes do primeiro login.
 
 O deploy público não foi executado na Sprint 0 local porque exige credenciais da conta Vercel/Supabase.
-

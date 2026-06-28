@@ -28,63 +28,77 @@ enum EtapaForm148 {
   escaneado
 }
 
+enum TipoMovimento {
+  entrada
+  saida
+  transferencia
+  baixa
+}
+
 model Administracao {
-  id                    String       @id @default(cuid())
+  id                    String           @id @default(cuid())
   nome                  String
   cidade                String
-  uf                    String       @default("SP")
-  cnpj                  String       @unique
+  uf                    String           @default("SP")
+  cnpj                  String           @unique
   responsavelPatrimonio String
   regional              String
-  ativa                 Boolean      @default(true)
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @updatedAt
+  ativa                 Boolean          @default(true)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
   casas                 CasaOracao[]
   usuarios              Usuario[]
   auditLogs             AuditLog[]
   controlesMensais      ControleMensal[]
   form148Statuses       Form148Status[]
+  documentos            Documento[]
+  movimentos            Movimento[]
 
   @@map("administracoes")
 }
 
 model CasaOracao {
-  id                    String        @id @default(cuid())
+  id                    String          @id @default(cuid())
   administracaoId       String
-  codigoSiga            String        @unique
+  codigoSiga            String          @unique
   nome                  String
   cidade                String
-  uf                    String        @default("SP")
+  uf                    String          @default("SP")
   anciaoCooperador      String?
   responsavelPatrimonio String?
-  ativa                 Boolean       @default(true)
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  administracao         Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  ativa                 Boolean         @default(true)
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  administracao         Administracao   @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
   usuarios              Usuario[]
   form148Statuses       Form148Status[]
+  documentos            Documento[]
+  movimentosOrigem      Movimento[]     @relation("MovimentoOrigem")
+  movimentosDestino     Movimento[]     @relation("MovimentoDestino")
 
   @@index([administracaoId])
   @@map("casas_oracao")
 }
 
 model Usuario {
-  id              String         @id @default(cuid())
-  authUserId      String?        @unique
-  administracaoId String
-  casaOracaoId    String?
-  nome            String
-  email           String         @unique
-  papel           PapelUsuario   @default(gestor_adm)
-  ativo           Boolean        @default(true)
-  lastLoginAt     DateTime?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  administracao   Administracao  @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
-  casaOracao      CasaOracao?    @relation(fields: [casaOracaoId], references: [id], onDelete: SetNull)
-  auditLogs       AuditLog[]
+  id                          String           @id @default(cuid())
+  authUserId                  String?          @unique
+  administracaoId             String
+  casaOracaoId                String?
+  nome                        String
+  email                       String           @unique
+  papel                       PapelUsuario     @default(gestor_adm)
+  ativo                       Boolean          @default(true)
+  lastLoginAt                 DateTime?
+  createdAt                   DateTime         @default(now())
+  updatedAt                   DateTime         @updatedAt
+  administracao               Administracao    @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  casaOracao                  CasaOracao?      @relation(fields: [casaOracaoId], references: [id], onDelete: SetNull)
+  auditLogs                   AuditLog[]
   controlesMensaisAtualizados ControleMensal[] @relation("ControleMensalAtualizadoPor")
   form148StatusesAtualizados  Form148Status[]  @relation("Form148StatusAtualizadoPor")
+  documentosUploadados        Documento[]
+  movimentosRegistrados       Movimento[]
 
   @@index([administracaoId])
   @@index([casaOracaoId])
@@ -146,4 +160,45 @@ model ControleMensal {
   @@unique([administracaoId, tarefaId, competenciaAno, competenciaMes])
   @@index([administracaoId, competenciaAno, competenciaMes])
   @@map("controle_mensal")
+}
+
+model Documento {
+  id              String        @id @default(cuid())
+  administracaoId String
+  casaOracaoId    String
+  competenciaAno  Int
+  competenciaMes  Int
+  tipo            String
+  storagePath     String
+  nomeOriginal    String
+  tamanhoBytes    Int
+  uploadadoPorId  String?
+  createdAt       DateTime      @default(now())
+  administracao   Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  casaOracao      CasaOracao    @relation(fields: [casaOracaoId], references: [id], onDelete: Cascade)
+  uploadadoPor    Usuario?      @relation(fields: [uploadadoPorId], references: [id], onDelete: SetNull)
+
+  @@index([casaOracaoId, competenciaAno, competenciaMes])
+  @@map("documentos")
+}
+
+model Movimento {
+  id              String        @id @default(cuid())
+  administracaoId String
+  casaOrigemId    String?
+  casaDestinoId   String?
+  tipo            TipoMovimento
+  descricao       String
+  dataMovimento   DateTime
+  documento       String?
+  registradoPorId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  administracao   Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  casaOrigem      CasaOracao?   @relation("MovimentoOrigem", fields: [casaOrigemId], references: [id], onDelete: SetNull)
+  casaDestino     CasaOracao?   @relation("MovimentoDestino", fields: [casaDestinoId], references: [id], onDelete: SetNull)
+  registradoPor   Usuario?      @relation(fields: [registradoPorId], references: [id], onDelete: SetNull)
+
+  @@index([administracaoId, dataMovimento])
+  @@map("movimentos")
 }
