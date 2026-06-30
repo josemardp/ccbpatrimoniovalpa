@@ -28,7 +28,7 @@ async function main() {
       codigoSiga: "22-1689",
       nome: "Central - Bento de Abreu",
       cidade: "Bento de Abreu",
-      anciaoCooperador: "Osmar José Soares / Edivaldo José dos Santos",
+      anciaoCooperador: "Osmar José Soares",
       responsavelPatrimonio: "João Batista Pereira",
     },
     {
