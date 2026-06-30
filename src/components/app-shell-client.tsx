@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardCheck,
+  ClipboardList,
   FileText,
   Home,
   ListChecks,
@@ -28,6 +29,7 @@ const navItems = [
   { href: "/formularios", label: "Formulários", icon: FileText },
   { href: "/checklist", label: "Checklist", icon: ClipboardCheck },
   { href: "/pendencias", label: "Pendências", icon: Bell },
+  { href: "/tarefas", label: "Tarefas", icon: ClipboardList },
   { href: "/inventario", label: "Inventário", icon: Warehouse },
   { href: "/relatorios", label: "Relatórios", icon: ScrollText },
 ];
@@ -40,6 +42,7 @@ export function AppShellClient({
   subtitle,
   signOutAction,
   pendenciasCount,
+  tarefasCount,
 }: {
   children: React.ReactNode;
   userName: string;
@@ -48,6 +51,7 @@ export function AppShellClient({
   subtitle: string;
   signOutAction: () => Promise<void>;
   pendenciasCount: number;
+  tarefasCount: number;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -121,6 +125,7 @@ export function AppShellClient({
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const badgeCount = item.href === "/pendencias" ? pendenciasCount : item.href === "/tarefas" ? tarefasCount : 0;
             return (
               <Link
                 aria-current={active ? "page" : undefined}
@@ -138,15 +143,15 @@ export function AppShellClient({
                 {!collapsed ? (
                   <>
                     <span className="flex-1">{item.label}</span>
-                    {item.href === "/pendencias" && pendenciasCount > 0 ? (
+                    {badgeCount > 0 ? (
                       <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
-                        {pendenciasCount}
+                        {badgeCount}
                       </span>
                     ) : null}
                   </>
-                ) : item.href === "/pendencias" && pendenciasCount > 0 ? (
+                ) : badgeCount > 0 ? (
                   <span className="absolute ml-5 mt-[-18px] rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                    {pendenciasCount}
+                    {badgeCount}
                   </span>
                 ) : null}
               </Link>
@@ -197,9 +202,9 @@ export function AppShellClient({
                 key={item.href}
               >
                 {item.label}
-                {item.href === "/pendencias" && pendenciasCount > 0 ? (
+                {(item.href === "/pendencias" ? pendenciasCount : item.href === "/tarefas" ? tarefasCount : 0) > 0 ? (
                   <span className="ml-2 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                    {pendenciasCount}
+                    {item.href === "/pendencias" ? pendenciasCount : tarefasCount}
                   </span>
                 ) : null}
               </Link>
@@ -233,6 +238,7 @@ export function AppShellClient({
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  const badgeCount = item.href === "/pendencias" ? pendenciasCount : item.href === "/tarefas" ? tarefasCount : 0;
                   return (
                     <Link
                       aria-current={active ? "page" : undefined}
@@ -245,9 +251,9 @@ export function AppShellClient({
                     >
                       <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
                       <span className="flex-1">{item.label}</span>
-                      {item.href === "/pendencias" && pendenciasCount > 0 ? (
+                      {badgeCount > 0 ? (
                         <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
-                          {pendenciasCount}
+                          {badgeCount}
                         </span>
                       ) : null}
                     </Link>

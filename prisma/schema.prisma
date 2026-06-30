@@ -62,6 +62,7 @@ model Administracao {
   documentos            Documento[]
   movimentos            Movimento[]
   bensPatrimoniais      BemPatrimonial[]
+  tarefasAdm            TarefaAdm[]
 
   @@map("administracoes")
 }
@@ -110,6 +111,7 @@ model Usuario {
   documentosUploadados        Documento[]
   movimentosRegistrados       Movimento[]
   bensRegistrados             BemPatrimonial[]
+  tarefasCriadas              TarefaAdm[]
 
   @@index([administracaoId])
   @@index([casaOracaoId])
@@ -241,4 +243,22 @@ model BemPatrimonial {
   @@index([casaOracaoId])
   @@index([administracaoId, categoria])
   @@map("bens_patrimoniais")
+}
+
+model TarefaAdm {
+  id              String        @id @default(cuid())
+  administracaoId String
+  titulo          String
+  descricao       String?
+  prazo           DateTime?
+  concluida       Boolean       @default(false)
+  concluidaEm     DateTime?
+  criadaPorId     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  administracao   Administracao @relation(fields: [administracaoId], references: [id], onDelete: Cascade)
+  criadaPor       Usuario?      @relation(fields: [criadaPorId], references: [id], onDelete: SetNull)
+
+  @@index([administracaoId, concluida])
+  @@map("tarefas_adm")
 }

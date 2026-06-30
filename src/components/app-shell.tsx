@@ -20,13 +20,24 @@ export async function AppShell({
     where: { email: userEmail },
     select: { administracaoId: true },
   });
-  const pendenciasCount = usuario ? await countPendenciasAbertas(usuario.administracaoId) : 0;
+  const [pendenciasCount, tarefasCount] = usuario
+    ? await Promise.all([
+        countPendenciasAbertas(usuario.administracaoId),
+        prisma.tarefaAdm.count({
+          where: {
+            administracaoId: usuario.administracaoId,
+            concluida: false,
+          },
+        }),
+      ])
+    : [0, 0];
 
   return (
     <AppShellClient
       pendenciasCount={pendenciasCount}
       signOutAction={signOut}
       subtitle={subtitle}
+      tarefasCount={tarefasCount}
       title={title}
       userEmail={userEmail}
       userName={userName}
