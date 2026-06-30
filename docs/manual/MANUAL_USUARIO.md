@@ -1,33 +1,5 @@
 # Manual do Usuário — CCB Patrimônio
 
-## Índice
-
-- [1. Introdução](#1-introdução)
-- [2. Perfis de Usuário e Permissões](#2-perfis-de-usuário-e-permissões)
-- [3. Navegação Geral](#3-navegação-geral)
-- [4. Seções do Sistema](#4-seções-do-sistema)
-  - [4.1 Dashboard](#41-dashboard)
-  - [4.2 Rotinas](#42-rotinas)
-  - [4.3 Movimentos](#43-movimentos)
-  - [4.4 Formulários](#44-formulários)
-  - [4.5 Checklist](#45-checklist)
-  - [4.6 Pendências](#46-pendências)
-  - [4.7 Inventário](#47-inventário)
-  - [4.8 Relatórios](#48-relatórios)
-- [5. Fluxos Principais](#5-fluxos-principais)
-  - [Entrar no sistema](#entrar-no-sistema)
-  - [Atualizar o Form. 14.8 mensal](#atualizar-o-form-148-mensal)
-  - [Acompanhar alerta de pendências do mês anterior](#acompanhar-alerta-de-pendências-do-mês-anterior)
-  - [Anexar Form. 14.8 escaneado](#anexar-form-148-escaneado)
-  - [Resolver pendências](#resolver-pendências)
-  - [Registrar movimento patrimonial](#registrar-movimento-patrimonial)
-  - [Cadastrar bem manualmente](#cadastrar-bem-manualmente)
-  - [Importar bens do SIGA](#importar-bens-do-siga)
-  - [Editar ou desativar bem](#editar-ou-desativar-bem)
-  - [Editar dados de Casa de Oração](#editar-dados-de-casa-de-oração)
-  - [Gerar relatórios](#gerar-relatórios)
-- [6. FAQ](#6-faq)
-
 ## 1. Introdução
 
 O CCB Patrimônio é o sistema de apoio à gestão de bens móveis da Administração Valparaíso/SP. Ele centraliza o acompanhamento mensal do Form. 14.8, controle geral de rotinas, movimentos patrimoniais, checklist de dados das Casas de Oração, inventário, pendências e relatórios.
@@ -71,13 +43,11 @@ Algumas telas usam competência de trabalho, formada por mês e ano. A competên
 
 ### 4.1 Dashboard
 
-Descrição do propósito: visão geral da competência atual, com indicadores de Casas em dia, pendências abertas, formulários concluídos, controle geral, checklist SIGA e total de bens ativos.
-
-Print real:
+Visão geral da competência atual, com indicadores de Casas em dia, pendências abertas, formulários concluídos, controle geral, checklist SIGA e total de bens ativos.
 
 ![Dashboard](screenshots/01-dashboard.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Competência atual.
 - Cards de indicadores calculados a partir do banco.
@@ -85,7 +55,7 @@ O que o usuário vê:
 - Atalho para relatórios.
 - Lista das Casas de Oração cadastradas, com Código SIGA, nome e cidade.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Acessar pendências pelo alerta, quando houver.
 - Abrir relatórios pelo atalho **Ver relatório completo**.
@@ -95,13 +65,11 @@ Nota: quando existirem pendências do mês anterior, o Dashboard exibe um alerta
 
 ### 4.2 Rotinas
 
-Descrição do propósito: atualização mensal do status do Form. 14.8 por Casa de Oração e do Controle Geral da Administração.
-
-Print real:
+Atualização mensal do status do Form. 14.8 por Casa de Oração e do Controle Geral da Administração.
 
 ![Rotinas](screenshots/02-rotinas.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Mês e ano de trabalho.
 - Tabela do Form. 14.8 por Casa de Oração.
@@ -109,7 +77,7 @@ O que o usuário vê:
 - Tabela de Controle Geral com 7 tarefas fixas distribuídas pelos 12 meses.
 - Alertas de meses anteriores com status vazio ou pendente.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Alterar mês e ano da competência.
 - Mudar cada status diretamente nos seletores da tabela.
@@ -129,13 +97,11 @@ As alterações de status são persistidas imediatamente no banco e revalidam Da
 
 ### 4.3 Movimentos
 
-Descrição do propósito: registrar e consultar entradas, saídas, transferências e baixas de bens patrimoniais.
-
-Print real:
+Registrar e consultar entradas, saídas, transferências e baixas de bens patrimoniais.
 
 ![Movimentos](screenshots/03-movimentos.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Filtros por tipo, Casa de Oração, mês e ano.
 - Botão de exportação dos movimentos do período.
@@ -143,7 +109,7 @@ O que o usuário vê:
 - Tabela de movimentos com data, tipo, descrição, origem, destino e usuário que registrou.
 - Paginação com 20 registros por página.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Filtrar movimentos.
 - Exportar movimentos em `.xlsx`.
@@ -159,20 +125,18 @@ Regras aplicadas no registro:
 
 ### 4.4 Formulários
 
-Descrição do propósito: acompanhar o status do Form. 14.8 por Casa de Oração e acessar o histórico/documentos de cada casa.
-
-Print real:
+Acompanhar o status do Form. 14.8 por Casa de Oração e acessar o histórico/documentos de cada casa.
 
 ![Formulários](screenshots/04-formularios.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Seleção de competência.
 - Tabela com todas as Casas de Oração ativas.
 - Colunas de status das etapas do Form. 14.8.
 - Botão **Ver detalhes** para cada casa.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Alterar mês e ano da competência.
 - Abrir o detalhe de uma Casa de Oração.
@@ -180,25 +144,23 @@ Ações disponíveis:
 - Anexar formulário escaneado em PDF.
 - Visualizar documentos já enviados.
 
-Observação: ao anexar PDF do tipo Form. 14.8, o sistema marca automaticamente a etapa **Escaneado** como `ok` para a competência.
+> **Observação:** ao anexar PDF do tipo Form. 14.8, o sistema marca automaticamente a etapa **Escaneado** como `ok` para a competência.
 
 Nota importante: o formulário escaneado deve ser enviado em PDF e o arquivo não pode ultrapassar 10 MB.
 
 ### 4.5 Checklist
 
-Descrição do propósito: manter dados operacionais das Casas de Oração usados nos checklists e formulários.
-
-Print real:
+Manter dados operacionais das Casas de Oração usados nos checklists e formulários.
 
 ![Checklist](screenshots/05-checklist.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Lista das Casas de Oração.
 - Código SIGA, nome, Ancião / Cooperador, Responsável Patrimônio e status ativo/inativo.
 - Botão **Editar** por casa.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Editar Ancião / Cooperador.
 - Editar Responsável Patrimônio.
@@ -207,20 +169,18 @@ As alterações são gravadas na Casa de Oração e registradas em auditoria.
 
 ### 4.6 Pendências
 
-Descrição do propósito: reunir itens pendentes ou vazios do mês anterior para acompanhamento e resolução.
-
-Print real:
+Reunir itens pendentes ou vazios do mês anterior para acompanhamento e resolução.
 
 ![Pendências](screenshots/06-pendencias.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Total de pendências abertas.
 - Pendências do Form. 14.8 agrupadas por Casa de Oração.
 - Pendências do Controle Geral agrupadas na Administração.
 - Estado vazio quando não houver pendências.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Marcar uma pendência como resolvida.
 
@@ -228,13 +188,11 @@ Ao marcar resolvido, o sistema altera o status do item para `ok`.
 
 ### 4.7 Inventário
 
-Descrição do propósito: cadastrar, consultar, importar, exportar e manter bens patrimoniais ativos.
-
-Print real:
+Cadastrar, consultar, importar, exportar e manter bens patrimoniais ativos.
 
 ![Inventário](screenshots/07-inventario.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Filtros por busca, Casa de Oração, categoria e estado de conservação.
 - Botão **Exportar**.
@@ -243,7 +201,7 @@ O que o usuário vê:
 - Tabela de bens ativos com código, descrição, categoria, casa, estado, valor e ações.
 - Paginação com 25 registros por página.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Filtrar bens por descrição/código, casa, categoria e estado.
 - Exportar inventário completo em `.xlsx`.
@@ -285,20 +243,18 @@ Importação SIGA:
 
 ### 4.8 Relatórios
 
-Descrição do propósito: consolidar informações de Form. 14.8, inventário, movimentos e pendências para consulta, impressão e exportação.
-
-Print real:
+Consolidar informações de Form. 14.8, inventário, movimentos e pendências para consulta, impressão e exportação.
 
 ![Relatórios](screenshots/08-relatorios.png)
 
-O que o usuário vê:
+**O que você vê:**
 
 - Abas: Form 14.8, Inventário, Movimentos e Pendências.
 - Seletores de competência nas abas que dependem de mês/ano.
 - Tabelas e cards consolidados.
 - Botões de exportação e impressão conforme a aba.
 
-Ações disponíveis:
+**Ações disponíveis:**
 
 - Consultar Form. 14.8 por Casa de Oração, com percentual de conclusão.
 - Exportar controle da competência em `.xlsx`.
