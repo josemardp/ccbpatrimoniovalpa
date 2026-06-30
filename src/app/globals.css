@@ -33,7 +33,61 @@ body {
     display: block !important;
   }
 
+  aside,
+  .print\:hidden {
+    display: none !important;
+  }
+
   body {
-    background: white;
+    background: white !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  article,
+  section {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .grid {
+    display: block !important;
+  }
+
+  h2 {
+    break-before: page;
+    margin-top: 0 !important;
+  }
+
+  h1 {
+    break-before: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+    break-inside: avoid;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  .bg-slate-950 {
+    background: white !important;
+    color: black !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding: 16px 0 !important;
+  }
+
+  .bg-slate-950 .text-slate-300 {
+    color: #475569 !important;
+  }
+
+  .bg-slate-950 .bg-blue-600 {
+    background: #2563eb !important;
   }
 }

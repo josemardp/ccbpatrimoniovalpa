@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { BookOpen } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { DownloadPdfButton } from "@/components/download-pdf-button";
 import { ManualMarkdown } from "@/components/manual-markdown";
 import { requireGestorAdm } from "@/lib/auth";
 
@@ -62,6 +63,7 @@ export default async function ManualPage() {
                   <p className="mt-2 text-sm leading-6 text-slate-300">Guia completo do CCB Patrimônio</p>
                 </div>
               </div>
+              <DownloadPdfButton />
             </div>
           </div>
         </section>
