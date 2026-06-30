@@ -7,6 +7,7 @@ import { useEffect, useState, type MouseEvent } from "react";
 import {
   BarChart3,
   Bell,
+  BookOpen,
   ChevronLeft,
   ChevronRight,
   ClipboardCheck,
@@ -158,6 +159,18 @@ export function AppShellClient({
             );
           })}
         </nav>
+        <div className="border-t border-white/10 px-3 py-3">
+          <Link
+            className={`flex items-center rounded-md px-3 py-2 text-xs text-slate-400 hover:bg-white/10 hover:text-white ${
+              collapsed ? "justify-center" : "gap-3"
+            }`}
+            href="/manual"
+            title={collapsed ? "Manual do Usuário" : undefined}
+          >
+            <BookOpen className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+            {!collapsed ? <span>Manual do Usuário</span> : null}
+          </Link>
+        </div>
       </aside>
 
       <div className={`transition-all duration-200 ${collapsed ? "lg:pl-20" : "lg:pl-64"}`}>
@@ -259,6 +272,14 @@ export function AppShellClient({
                     </Link>
                   );
                 })}
+                <Link
+                  className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+                  href="/manual"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <BookOpen className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                  <span>Manual do Usuário</span>
+                </Link>
               </nav>
             </aside>
           </div>
